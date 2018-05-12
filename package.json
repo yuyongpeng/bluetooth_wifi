@@ -1,0 +1,44 @@
+{
+  "author": "yu yongpeng",
+  "maintainers": [],
+  "license": "MIT",
+  "name": "bluetooth_wifi",
+  "description": "A Node.js BLE control wifi",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuyongpeng/bluetooth_wifi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuyongpeng/bluetooth_wifi/issues"
+  },
+  "keywords": [
+    "bluetooth",
+    "BLE",
+    "bleno"
+  ],
+  "main": "./index.js",
+  "engines": {
+    "node": ">=0.8"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "dependencies": {
+    "bleno": "~0.5.0",
+    "node-rsa": "^0.4.2"
+  },
+  "optionalDependencies": {
+    "bluetooth-hci-socket": "^0.5.1",
+    "bplist-parser": "0.0.6",
+    "xpc-connection": "~0.1.4"
+  },
+  "devDependencies": {
+    "sinon": "~1.6.0",
+    "async": "~0.2.9",
+    "ws": "~0.4.31"
+  },
+  "scripts": {},
+  "browser": {}
+}
