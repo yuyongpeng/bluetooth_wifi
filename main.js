@@ -1,7 +1,7 @@
-var bleno = require('../..');
-var DphotosService = require('./dphotos-service');
+var bleno = require('bleno');
 var NodeRSA = require('node-rsa');
-var dphotos = require('dphotos')
+var dphotos = require('./dphotos')
+var DphotosService = require('./dphotos-service');
 
 var primaryService = new DphotosService();
 

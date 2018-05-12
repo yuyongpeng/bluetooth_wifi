@@ -73,9 +73,9 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
 };
 
 // 通知
-DphotosPairCharacteristic.prototype.onNotify = function(offset, callback) {
-    //callback(this.RESULT_SUCCESS, Buffer.from('{"state":"SUCESS","IP":"192.168.1.100"}', 'utf8'));
-    callback(this.RESULT_SUCCESS, Buffer.from('{"state":"FAIL","msg":"error password","errorno":"2001"}', 'utf8'));
-};
+// DphotosPairCharacteristic.prototype.onNotify = function(offset, callback) {
+//     //callback(this.RESULT_SUCCESS, Buffer.from('{"state":"SUCESS","IP":"192.168.1.100"}', 'utf8'));
+//     callback(this.RESULT_SUCCESS, Buffer.from('{"state":"FAIL","msg":"error password","errorno":"2001"}', 'utf8'));
+// };
 
 module.exports = DphotosWifiCharacteristic;
