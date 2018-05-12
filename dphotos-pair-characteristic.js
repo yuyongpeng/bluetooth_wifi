@@ -25,10 +25,7 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
     if (offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
-    else if (data.length !== 1) {
-        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
-    }
-    else {
+    else if (data.length > 0) {
         data_json = data.toString('hex');
         pair_obj = JSON.parse(data_json)
         username = pair_obj.username;
@@ -38,8 +35,12 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
             this._updateValueCallback(this._value);
         }
-
-        callback(this.RESULT_SUCCESS);
+        if(! withoutResponse){
+            callback(this.RESULT_SUCCESS);
+        }
+    }
+    else {
+        console.log('444444');
     }
 };
 // 订阅
