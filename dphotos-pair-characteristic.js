@@ -48,7 +48,7 @@ DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateV
     this._updateValueCallback = updateValueCallback;
 };
 // 撤销订阅
-EchoCharacteristic.prototype.onUnsubscribe = function() {
+DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
     console.log('DphotosPairCharacteristic - onUnsubscribe');
     this._updateValueCallback = null;
 };
