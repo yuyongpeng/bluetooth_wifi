@@ -14,7 +14,9 @@ var DphotosPairCharacteristic = function() {
         value: 'BLE pair'
       })
     ]
-  });
+    });
+    this._value = 'xxxxxxx11';
+    this._updateValueCallback = null;
 };
 
 util.inherits(DphotosPairCharacteristic, Characteristic);
@@ -31,27 +33,29 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         pair_obj = JSON.parse(data_json)
         username = pair_obj.username;
         mobile = pair_obj.mobile;
+        // 如果注册了回调，就调用
+        if (this._updateValueCallback) {
+            console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
+            this._updateValueCallback(this._value);
+        }
+
         callback(this.RESULT_SUCCESS);
     }
 };
 // 订阅
-DphotosPairCharacteristic.prototype.onSubscribe = function(offset, callback) {
-    if (os.platform() === 'darwin') {
-        exec('pmset -g batt', function (error, stdout, stderr) {
-            var data = stdout.toString();
-            // data - 'Now drawing from \'Battery Power\'\n -InternalBattery-0\t95%; discharging; 4:11 remaining\n'
-            var percent = data.split('\t')[1].split(';')[0];
-            console.log(percent);
-            percent = parseInt(percent, 10);
-            callback(this.RESULT_SUCCESS, new Buffer([percent]));
-        });
-    } else {
-        // return hardcoded value
-        callback(this.RESULT_SUCCESS, new Buffer([98]));
-    }
+DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+    console.log('DphotosPairCharacteristic - onSubscribe');
+    this._updateValueCallback = updateValueCallback;
 };
+// 撤销订阅
+EchoCharacteristic.prototype.onUnsubscribe = function() {
+    console.log('DphotosPairCharacteristic - onUnsubscribe');
+    this._updateValueCallback = null;
+};
+
 // 通知
-// DphotosPairCharacteristic.prototype.onNotify = function(offset, callback) {
+// DphotosPairCharacteristic.prototype.onNotify = function() {
+// console.log('NotifyOnlyCharacteristic on notify');
 //     //callback(this.RESULT_SUCCESS, Buffer.from('{"state":"SUCESS","IP":"192.168.1.100"}', 'utf8'));
 //     callback(this.RESULT_SUCCESS, Buffer.from('{"state":"FAIL","msg":"error password","errorno":"2001"}', 'utf8'));
 // };
