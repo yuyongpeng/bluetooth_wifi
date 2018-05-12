@@ -10,15 +10,15 @@ var Characteristic = bleno.Characteristic;
 
 var DphotosWifiCharacteristic = function() {
     DphotosWifiCharacteristic.super_.call(this, {
-    uuid: 'DP04',
+    uuid: 'D004',
     properties: ['read', 'write', 'notify'],
     descriptors: [
       new Descriptor({
-        uuid: 'DP14',
+        uuid: 'D014',
         value: 'set wifi'
       }),
       new Descriptor({
-        uuid: 'DP24',
+        uuid: 'D024',
         value: new Buffer([0x04, 0x01, 0x27, 0xAD, 0x01, 0x00, 0x00 ]) // maybe 12 0xC unsigned 8 bit
       })
     ]

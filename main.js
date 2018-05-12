@@ -18,6 +18,7 @@ bleno.on('stateChange', function(state) {
 bleno.on('advertisingStart', function(error) {
     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
     var key = new NodeRSA({b: 512});
+    console.log(key);
     dphotos.prikey = key;
     if (!error) {
         bleno.setServices([primaryService], function(error){

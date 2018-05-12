@@ -7,11 +7,11 @@ var Characteristic = bleno.Characteristic;
 
 var DphotosPubkeyCharacteristic = function() {
     DphotosPubkeyCharacteristic.super_.call(this, {
-    uuid: 'DP02',
+    uuid: 'D002',
     properties: ['read'],
     descriptors: [
       new Descriptor({
-        uuid: 'DP12',
+        uuid: 'D012',
         value: 'get public key RSA'
       })
     ]
@@ -21,7 +21,8 @@ var DphotosPubkeyCharacteristic = function() {
 util.inherits(DphotosPubkeyCharacteristic, Characteristic);
 
 DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  callback(this.RESULT_SUCCESS, dphotos.pubkey);
+    console.log(dphotos.prikey)
+  callback(this.RESULT_SUCCESS, '1');
 };
 
 module.exports = DphotosPubkeyCharacteristic;

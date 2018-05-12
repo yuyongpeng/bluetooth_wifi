@@ -6,11 +6,11 @@ var Characteristic = bleno.Characteristic;
 
 var DphotosPairCharacteristic = function() {
     DphotosPairCharacteristic.super_.call(this, {
-    uuid: 'DP03',
+    uuid: 'D003',
     properties: ['read', 'write', 'notify'],
     descriptors: [
       new Descriptor({
-        uuid: 'DP13',
+        uuid: 'D013',
         value: 'BLE pair'
       })
     ]

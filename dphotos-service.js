@@ -10,7 +10,7 @@ var DphotoWifiCharacteristic = require('./dphotos-wifi-characteristic');
 
 function DphotosService() {
     DphotosService.super_.call(this, {
-      uuid: 'DP01',
+      uuid: 'D001',
       characteristics: [
           new DphotoPubkeyCharacteristic(),
           new DphotoPairCharacteristic(),
