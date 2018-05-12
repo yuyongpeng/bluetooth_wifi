@@ -26,7 +26,9 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         callback(this.RESULT_ATTR_NOT_LONG);
     }
     else if (data.length > 0) {
-        data_json = data.toString('hex');
+        data_json = data.toString('utf8');
+        console.log(data_json);
+        // {"username":"yuyongpeng", "mobile":"12345"}
         pair_obj = JSON.parse(data_json)
         username = pair_obj.username;
         mobile = pair_obj.mobile;
