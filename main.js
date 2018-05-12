@@ -9,7 +9,7 @@ bleno.on('stateChange', function(state) {
     console.log('on -> stateChange: ' + state);
     if (state === 'poweredOn') {
         // 开启广播
-        bleno.startAdvertising('Battery', [primaryService.uuid]);
+        bleno.startAdvertising('dPHOTOS-tfb-1234', [primaryService.uuid]);
     } else {
         bleno.stopAdvertising();
     }

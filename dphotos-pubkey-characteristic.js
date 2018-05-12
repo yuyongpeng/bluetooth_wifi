@@ -21,7 +21,7 @@ var DphotosPubkeyCharacteristic = function() {
 util.inherits(DphotosPubkeyCharacteristic, Characteristic);
 
 DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  callback(this.RESULT_SUCCESS, Buffer.from(dphotos.pubkey));
+  callback(this.RESULT_SUCCESS, dphotos.pubkey);
 };
 
 module.exports = DphotosPubkeyCharacteristic;
