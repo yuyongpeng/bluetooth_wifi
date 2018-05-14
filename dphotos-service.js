@@ -13,7 +13,7 @@ function DphotosService() {
     DphotosService.super_.call(this, {
       uuid: 'D001',
       characteristics: [
-          new DphotosConnectCharacteristic(),
+          // new DphotosConnectCharacteristic(),
           new DphotoPubkeyCharacteristic(),
           new DphotoPairCharacteristic(),
           new DphotoWifiCharacteristic()

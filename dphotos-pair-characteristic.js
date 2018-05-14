@@ -1,7 +1,7 @@
 var util = require('util');
 var bleno = require('bleno');
 var dphotos = require('./dphotos');
-
+var aes = require('./utils');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
@@ -30,7 +30,7 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         data_str = data.toString('utf8');
         var tp = data_str.substr(0, 1);
         var ds = data_str.substr(1);
-        if(tp == '0' && db.length < 19){
+        if(tp == '0' && data.length < 19){
 
         }
         this._value += ds;
@@ -56,7 +56,8 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
                 rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
                 rt_json = JSON.stringify(rt);
-                var rt_base64 = new Buffer(rt_json).toString('base64')
+                var rt_base64 = new Buffer(rt_json).toString('base64');
+                // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
                 this._updateValueCallback(rt_base64);
             }
         }
