@@ -43,9 +43,11 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         console.log(ds);
         this._value += ds;
         if (tp == '1') {
-            data_json = aes.decryption(this._value, dphotos.key, dphotos.iv);
+            all_data = this._value;
+            this._value = '';
+            data_json = aes.decryption(all_data, dphotos.key, dphotos.iv);
             // var data_json = new Buffer(this._value, 'base64').toString('utf8');
-            console.log(this._value);
+            console.log(all_data);
             pair_obj = JSON.parse(data_json)
             ssid = pair_obj.ssid;
             password = pair_obj.password;
@@ -66,10 +68,11 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
                 // 获得wifi的ip地址
                 wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+                console.log(wifi_ipv4);
                 rt = {state: 'SUCESS', ip: wifi_ipv4};
                 // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
                 rt_json = JSON.stringify(rt);
-                secrect = aes.encryption(rt_json, dphotos.key, dphotos, iv);
+                secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                 var rt_base64 = new Buffer(rt_json).toString('base64')
                 this._updateValueCallback(secrect);
             }

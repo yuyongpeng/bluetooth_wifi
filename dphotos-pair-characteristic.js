@@ -34,8 +34,10 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         // console.log(ds);
         this._value += ds;
         if (tp == '1'){
-            var data_json = new Buffer(this._value, 'base64').toString('utf8');
-            console.log(this._value);
+            all_data = this._value;
+            this._value = '';
+            var data_json = new Buffer(all_data, 'base64').toString('utf8');
+            console.log(all_data);
             pair_obj = JSON.parse(data_json)
             username = pair_obj.username;
             mobile = pair_obj.mobile;
