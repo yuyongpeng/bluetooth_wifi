@@ -39,8 +39,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         data_str = data.toString('utf8');
         var tp = data_str.substr(0, 1);
         var ds = data_str.substr(1);
-        // console.log(tp);
-        // console.log(ds);
+        console.log(tp);
+        console.log(ds);
         this._value += ds;
         if (tp == '1') {
             data_json = aes.decryption(data_str, dphotos.key(), dphotos.iv());
@@ -83,9 +83,10 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 var rt_base64 = new Buffer(rt_json).toString('base64')
                 this._updateValueCallback(secrect);
             }
-            if (!withoutResponse) {
-                callback(this.RESULT_SUCCESS);
-            }
+        }
+        if (!withoutResponse) {
+            callback(this.RESULT_SUCCESS);
+        }
             // {"ssid":"hard-chain","password":"hard-chain2017"}
             // qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg==
             // 0qaJDlAyIzXV25TbLCQy
@@ -93,7 +94,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             // 0LShecf3QpT7jnY8t40y
             // 0QhVbdhEX9ECKIqHC80O
             // 07RGMlw6ndg==
-            // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O07RGMlw6ndg==
+            // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZ0LShecf3QpT7jnY8t40y0QhVbdhEX9ECKIqHC80O07RGMlw6ndg==
 
             // network = commands.getstatusoutput("wpa_cli -iwlan0 add_network")
             // id = network[1]
@@ -103,7 +104,6 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s psk '\"%s\"'" % (id, js['password']))
             // commands.getstatusoutput("wpa_cli -iwlan0 enable_network %s" % id)
             // commands.getstatusoutput("wpa_cli -iwlan0 save")
-        }
     }else{
         callback(this.RESULT_UNLIKELY_ERROR);
     }
@@ -111,7 +111,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
 
 // 订阅
 DphotosWifiCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-    console.log('DphotosPubkeyCharacteristic - onSubscribe');
+    console.log('DphotosWifiCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
 };
 
