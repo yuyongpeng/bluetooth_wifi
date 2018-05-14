@@ -42,8 +42,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         // console.log(tp);
         // console.log(ds);
         this._value += ds;
-        if (tp == '1'){
-            data_json = aes.decryption(data_str,dphotos.key(),dphotos.iv());
+        if (tp == '1') {
+            data_json = aes.decryption(data_str, dphotos.key(), dphotos.iv());
             // var data_json = new Buffer(this._value, 'base64').toString('utf8');
             console.log(this._value);
             pair_obj = JSON.parse(data_json)
@@ -75,33 +75,37 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             if (this._updateValueCallback) {
                 console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
                 // 获得wifi的ip地址
-                wifi_ipv4=os.networkInterfaces().wlan0[0].address;
+                wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
                 rt = {state: 'SUCESS', ip: wifi_ipv4};
                 // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
                 rt_json = JSON.stringify(rt);
-                secrect = aes.encryption(rt_json, dphotos.key(), dphotos,iv());
+                secrect = aes.encryption(rt_json, dphotos.key(), dphotos, iv());
                 var rt_base64 = new Buffer(rt_json).toString('base64')
                 this._updateValueCallback(secrect);
             }
-            callback(this.RESULT_SUCCESS);
-        }
-        // {"ssid":"hard-chain","password":"hard-chain2017"}
-        // qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg==
-        // 0qaJDlAyIzXV25TbLCQy
-        // 0Sl0e8VLoFHAzcpB2saZ
-        // 0LShecf3QpT7jnY8t40y
-        // 0QhVbdhEX9ECKIqHC80O
-        // 07RGMlw6ndg==
-        // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O07RGMlw6ndg==
+            if (!withoutResponse) {
+                callback(this.RESULT_SUCCESS);
+            }
+            // {"ssid":"hard-chain","password":"hard-chain2017"}
+            // qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg==
+            // 0qaJDlAyIzXV25TbLCQy
+            // 0Sl0e8VLoFHAzcpB2saZ
+            // 0LShecf3QpT7jnY8t40y
+            // 0QhVbdhEX9ECKIqHC80O
+            // 07RGMlw6ndg==
+            // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O07RGMlw6ndg==
 
-        // network = commands.getstatusoutput("wpa_cli -iwlan0 add_network")
-        // id = network[1]
-        // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s ssid '\"%s\"'" % (id, js['ssid']))
-        // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s ssid '\"%s\"'" % (id, js['ssid']))
-        // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s key_mgmt WPA-PSK" % id)
-        // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s psk '\"%s\"'" % (id, js['password']))
-        // commands.getstatusoutput("wpa_cli -iwlan0 enable_network %s" % id)
-        // commands.getstatusoutput("wpa_cli -iwlan0 save")
+            // network = commands.getstatusoutput("wpa_cli -iwlan0 add_network")
+            // id = network[1]
+            // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s ssid '\"%s\"'" % (id, js['ssid']))
+            // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s ssid '\"%s\"'" % (id, js['ssid']))
+            // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s key_mgmt WPA-PSK" % id)
+            // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s psk '\"%s\"'" % (id, js['password']))
+            // commands.getstatusoutput("wpa_cli -iwlan0 enable_network %s" % id)
+            // commands.getstatusoutput("wpa_cli -iwlan0 save")
+        }
+    }else{
+        callback(this.RESULT_UNLIKELY_ERROR);
     }
 };
 

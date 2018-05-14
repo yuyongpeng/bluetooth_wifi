@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var dphotos = require('./dphotos');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -51,7 +52,7 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         // 如果注册了回调，就调用
         if (this._updateValueCallback) {
             console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
-            rt = {state: 'SUCESS', key: dphotos.key(), iv: dphotos.iv()};
+            rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
             rt_json = JSON.stringify(rt);
             var rt_base64 = new Buffer(rt_json).toString('base64')
             this._updateValueCallback(rt_base64);
