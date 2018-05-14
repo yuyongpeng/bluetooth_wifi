@@ -15,8 +15,7 @@ function DphotosService() {
           new DphotoPubkeyCharacteristic(),
           new DphotoPairCharacteristic(),
           new DphotoWifiCharacteristic()
-      ],
-        mtu: 200
+      ]
   });
 }
 

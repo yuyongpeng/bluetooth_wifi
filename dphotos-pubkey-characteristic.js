@@ -22,7 +22,7 @@ var DphotosPubkeyCharacteristic = function() {
 util.inherits(DphotosPubkeyCharacteristic, Characteristic);
 
 DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
-    console.log(dphotos.prikey)
+    console.log(dphotos.key)
   callback(this.RESULT_SUCCESS, '1');
 };
 // 订阅

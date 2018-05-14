@@ -6,6 +6,8 @@ var events = require('events');
 
 function Dphotos() {
     events.EventEmitter.call(this);
+    this.key = '';
+    this.iv = '';
     this.pubkey = '';
     this.prikey = '';
 }

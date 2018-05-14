@@ -1,6 +1,7 @@
 var bleno = require('bleno');
 var NodeRSA = require('node-rsa');
-var dphotos = require('./dphotos')
+var dphotos = require('./dphotos');
+var aes = require('./utils');
 var DphotosService = require('./dphotos-service');
 
 var primaryService = new DphotosService();
@@ -16,6 +17,17 @@ bleno.on('stateChange', function(state) {
 });
 
 bleno.on('advertisingStart', function(error) {
+    console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
+    dphotos.key = aes.key();
+    dphotos.iv = aes.iv();
+    if (!error) {
+        bleno.setServices([primaryService], function(error){
+            console.log('set DphotosService: '  + (error ? 'error ' + error : 'success'));
+        });
+    }
+});
+
+bleno.on('mtu', function(error) {
     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
     var key = new NodeRSA({b: 512});
     console.log(key.exportKey());
