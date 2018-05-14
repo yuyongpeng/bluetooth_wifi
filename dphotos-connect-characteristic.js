@@ -7,7 +7,7 @@ var Characteristic = bleno.Characteristic;
 
 var DphotosConnectCharacteristic = function() {
     DphotosConnectCharacteristic.super_.call(this, {
-        uuid: 'D002',
+        uuid: 'D011',
         properties: ['read'],
         descriptors: [
             new Descriptor({

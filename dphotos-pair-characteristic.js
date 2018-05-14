@@ -30,10 +30,18 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         data_str = data.toString('utf8');
         var tp = data_str.substr(0, 1);
         var ds = data_str.substr(1);
-        // console.log(tp);
-        // console.log(ds);
+        if(tp == '0' && db.length < 19){
+
+        }
         this._value += ds;
         if (tp == '1'){
+            // {"username":"yuyongpeng", "mobile":"12345"}
+            // eyJ1c2VybmFtZSI6Inl1eW9uZ3BlbmciLCAibW9iaWxlIjoiMTIzNDUifQ==
+            // 0eyJ1c2VybmFtZSI6Inl01eW9uZ3BlbmciLCAibW09iaWxlIjoiMTIzNDUif1Q==
+            // 0eyJ1c2VybmFtZSI6Inl
+            // 01eW9uZ3BlbmciLCAibW
+            // 09iaWxlIjoiMTIzNDUif
+            // 1Q==
             all_data = this._value;
             this._value = '';
             var data_json = new Buffer(all_data, 'base64').toString('utf8');
@@ -42,26 +50,21 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             username = pair_obj.username;
             mobile = pair_obj.mobile;
             console.log(pair_obj);
-        }
-        // {"username":"yuyongpeng", "mobile":"12345"}
-        // eyJ1c2VybmFtZSI6Inl1eW9uZ3BlbmciLCAibW9iaWxlIjoiMTIzNDUifQ==
-        // 0eyJ1c2VybmFtZSI6Inl01eW9uZ3BlbmciLCAibW09iaWxlIjoiMTIzNDUif1Q==
-        // 0eyJ1c2VybmFtZSI6Inl
-        // 01eW9uZ3BlbmciLCAibW
-        // 09iaWxlIjoiMTIzNDUif
-        // 1Q==
 
-        // 如果注册了回调，就调用
-        if (this._updateValueCallback) {
-            console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
-            rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
-            rt_json = JSON.stringify(rt);
-            var rt_base64 = new Buffer(rt_json).toString('base64')
-            this._updateValueCallback(rt_base64);
+            // 如果注册了回调，就调用
+            if (this._updateValueCallback) {
+                console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
+                rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+                rt_json = JSON.stringify(rt);
+                var rt_base64 = new Buffer(rt_json).toString('base64')
+                this._updateValueCallback(rt_base64);
+            }
         }
         if(! withoutResponse){
             callback(this.RESULT_SUCCESS);
         }
+    }else if(data.length == 0){
+        console.log('fffffffffffffff');
     }
     else {
         console.log('444444');
