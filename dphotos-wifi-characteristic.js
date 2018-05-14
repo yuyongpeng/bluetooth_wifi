@@ -53,14 +53,15 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             password = pair_obj.password;
             console.log(pair_obj);
             network_id = 0;
-            network_id = execSync("wpa_cli -iwlan0 add_network ").toString('utf8').replace(/[\r\n]/g,"");
+            command_0 = "wpa_cli -iwlan0 add_network ";
+            network_id = execSync(command_0).toString('utf8').replace(/[\r\n]/g,"");
             command_1 = "wpa_cli -iwlan0 set_network " + network_id + " ssid '\"" + ssid + "\"'";
             wap_value = execSync(command_1).toString('utf8');
             console.log(command_1+"  ==  "+wap_value);
             command_2 = "wpa_cli -iwlan0 set_network " + network_id + " key_mgmt WPA-PSK ";
             wap_value = execSync(command_2).toString('utf8');
             console.log(command_2+"  ==  "+wap_value);
-            command_3 = "wpa_cli -iwlan0 set_network " + network_id + " psk " + password;
+            command_3 = "wpa_cli -iwlan0 set_network " + network_id + " psk '\"" + password + "\"'";
             wap_value = execSync(command_3).toString('utf8');
             console.log(command_3+"  ==  "+wap_value);
             command_4 = "wpa_cli -iwlan0 enable_network " + network_id;
