@@ -29,14 +29,14 @@ bleno.on('advertisingStart', function(error) {
     }
 });
 
-bleno.on('mtu', function(error) {
-    console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
-    var key = new NodeRSA({b: 512});
-    console.log(key.exportKey());
-    dphotos.prikey = key.exportKey();
-    if (!error) {
-        bleno.setServices([primaryService], function(error){
-            console.log('set DphotosService: '  + (error ? 'error ' + error : 'success'));
-        });
-    }
-});
+// bleno.on('mtu', function(error) {
+//     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
+//     var key = new NodeRSA({b: 512});
+//     console.log(key.exportKey());
+//     dphotos.prikey = key.exportKey();
+//     if (!error) {
+//         bleno.setServices([primaryService], function(error){
+//             console.log('set DphotosService: '  + (error ? 'error ' + error : 'success'));
+//         });
+//     }
+// });
