@@ -6,20 +6,21 @@ var aesutil = module.exports = {};
 
 aesutil.key = function () {
     const buf = Buffer.alloc(16);
-    var x = crypto.randomFill(buf, (err, buf) => {
+    crypto.randomFillSync(buf,0,16, (err, buf) => {
         if (err) throw err;
         // console.log(buf.toString('hex'));
     });
-    return x;
+    return buf.toString('hex');
+    // return x;
 }
 
 aesutil.iv = function () {
     const buf = Buffer.alloc(8);
-    var x = crypto.randomFill(buf, (err, buf) => {
+    crypto.randomFillSync(buf, 0, 8, (err, buf) => {
         if (err) throw err;
         // console.log(buf.toString('hex'));
     });
-    return x;
+    return buf.toString('hex');
 }
 
 /**
