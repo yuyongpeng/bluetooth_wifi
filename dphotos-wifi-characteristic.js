@@ -43,34 +43,24 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         console.log(ds);
         this._value += ds;
         if (tp == '1') {
-            data_json = aes.decryption(data_str, dphotos.key(), dphotos.iv());
+            data_json = aes.decryption(this._value, dphotos.key(), dphotos.iv());
             // var data_json = new Buffer(this._value, 'base64').toString('utf8');
             console.log(this._value);
             pair_obj = JSON.parse(data_json)
             ssid = pair_obj.ssid;
             password = pair_obj.password;
             console.log(pair_obj);
-
-            execSync("wpa_cli -iwlan0 set_network " + id + " ssid " + ssid, function (error, stdout, stderr) {
-                var data = stdout.toString();
-                console.log(data);
-            });
-            execSync("wpa_cli -iwlan0 set_network " + id + " key_mgmt WPA-PSK ", function (error, stdout, stderr) {
-                var data = stdout.toString();
-                console.log(data);
-            });
-            execSync("wpa_cli -iwlan0 set_network " + id + " psk " + password, function (error, stdout, stderr) {
-                var data = stdout.toString();
-                console.log(data);
-            });
-            execSync("wpa_cli -iwlan0 enable_network " + id, function (error, stdout, stderr) {
-                var data = stdout.toString();
-                console.log(data);
-            });
-            execSync("wpa_cli -iwlan0 save ", function (error, stdout, stderr) {
-                var data = stdout.toString();
-                console.log(data);
-            });
+            network_id = 0;
+            network_id = execSync("wpa_cli -iwlan0 add_network ").toString('utf8');
+            execSync("wpa_cli -iwlan0 set_network " + network_id + " ssid " + ssid);
+            execSync("wpa_cli -iwlan0 set_network " + network_id + " key_mgmt WPA-PSK ");
+            execSync("wpa_cli -iwlan0 set_network " + network_id + " psk " + password);
+            execSync("wpa_cli -iwlan0 enable_network " + network_id);
+            execSync("wpa_cli -iwlan0 save ");
+            // execSync("wpa_cli -iwlan0 save ", function (error, stdout, stderr) {
+            //     var data = stdout.toString();
+            //     console.log(data);
+            // });
             // 如果注册了回调，就调用
             if (this._updateValueCallback) {
                 console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
@@ -94,7 +84,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             // 0LShecf3QpT7jnY8t40y
             // 0QhVbdhEX9ECKIqHC80O
             // 07RGMlw6ndg==
-            // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZ0LShecf3QpT7jnY8t40y0QhVbdhEX9ECKIqHC80O07RGMlw6ndg==
+            // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZ0LShecf3QpT7jnY8t40y0QhVbdhEX9ECKIqHC80O17RGMlw6ndg==
 
             // network = commands.getstatusoutput("wpa_cli -iwlan0 add_network")
             // id = network[1]

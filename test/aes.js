@@ -85,20 +85,22 @@ var text = '{"ssid":"hard-chain","password":"hard-chain2017"}';
 var key = "ExchangePasswordPasswordExchange";    // 长度必须32
 var iv = new Buffer(crypto.randomBytes(16))
 var ivstring = iv.toString('hex').slice(0, 16);   // 长度必须16
+ivstring = 'f21dab5f0aca29c6'
 console.log(ivstring);
 mima = encryption(text,key,ivstring);
+mima = 'qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg=='
 console.log(mima)
 console.log(decryption(mima,key, ivstring))
 
 
 
-var crypto = require('crypto');
-var key = 'ExchangePasswordPasswordExchange';
-// var iv = new Buffer(crypto.randomBytes(16))
-// var ivstring = iv.toString('hex').slice(0, 16);
-var cipher = crypto.createCipheriv('aes-256-cbc', key, ivstring)
-var  decipher = crypto.createDecipheriv('aes-256-cbc', key,ivstring);
-
-cipher.update(plaintext, 'utf8', 'base64');
-var encryptedPassword = cipher.final('base64');
-console.log(encryptedPassword)
+// var crypto = require('crypto');
+// var key = 'ExchangePasswordPasswordExchange';
+// // var iv = new Buffer(crypto.randomBytes(16))
+// // var ivstring = iv.toString('hex').slice(0, 16);
+// var cipher = crypto.createCipheriv('aes-256-cbc', key, ivstring)
+// var  decipher = crypto.createDecipheriv('aes-256-cbc', key,ivstring);
+//
+// cipher.update(plaintext, 'utf8', 'base64');
+// var encryptedPassword = cipher.final('base64');
+// console.log(encryptedPassword)
