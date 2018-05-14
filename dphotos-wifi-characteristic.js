@@ -69,7 +69,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 rt = {state: 'SUCESS', ip: wifi_ipv4};
                 // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
                 rt_json = JSON.stringify(rt);
-                secrect = aes.encryption(rt_json, dphotos.key(), dphotos, iv());
+                secrect = aes.encryption(rt_json, dphotos.key, dphotos, iv);
                 var rt_base64 = new Buffer(rt_json).toString('base64')
                 this._updateValueCallback(secrect);
             }
