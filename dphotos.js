@@ -6,10 +6,11 @@ var events = require('events');
 
 function Dphotos() {
     events.EventEmitter.call(this);
-    this.key = '';
-    this.iv = '';
+    this.key = 'ExchangePasswordPasswordExchange';
+    this.iv = 'f21dab5f0aca29c6';
     this.pubkey = '';
     this.prikey = '';
+
 }
 
 util.inherits(Dphotos, events.EventEmitter);

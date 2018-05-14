@@ -15,7 +15,7 @@ var DphotosPairCharacteristic = function() {
       })
     ]
     });
-    this._value = 'xxxxxxx11';
+    this._value = '';
     this._updateValueCallback = null;
 };
 
@@ -26,16 +26,35 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
         callback(this.RESULT_ATTR_NOT_LONG);
     }
     else if (data.length > 0) {
-        data_json = data.toString('utf8');
-        console.log(data_json);
+        data_str = data.toString('utf8');
+        var tp = data_str.substr(0, 1);
+        var ds = data_str.substr(1);
+        // console.log(tp);
+        // console.log(ds);
+        this._value += ds;
+        if (tp == '1'){
+            var data_json = new Buffer(this._value, 'base64').toString('utf8');
+            console.log(this._value);
+            pair_obj = JSON.parse(data_json)
+            username = pair_obj.username;
+            mobile = pair_obj.mobile;
+            console.log(pair_obj);
+        }
         // {"username":"yuyongpeng", "mobile":"12345"}
-        pair_obj = JSON.parse(data_json)
-        username = pair_obj.username;
-        mobile = pair_obj.mobile;
+        // eyJ1c2VybmFtZSI6Inl1eW9uZ3BlbmciLCAibW9iaWxlIjoiMTIzNDUifQ==
+        // 0eyJ1c2VybmFtZSI6Inl01eW9uZ3BlbmciLCAibW09iaWxlIjoiMTIzNDUif1Q==
+        // 0eyJ1c2VybmFtZSI6Inl
+        // 01eW9uZ3BlbmciLCAibW
+        // 09iaWxlIjoiMTIzNDUif
+        // 1Q==
+
         // 如果注册了回调，就调用
         if (this._updateValueCallback) {
             console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
-            this._updateValueCallback(this._value);
+            rt = {state: 'SUCESS', key: dphotos.key(), iv: dphotos.iv()};
+            rt_json = JSON.stringify(rt);
+            var rt_base64 = new Buffer(rt_json).toString('base64')
+            this._updateValueCallback(rt_base64);
         }
         if(! withoutResponse){
             callback(this.RESULT_SUCCESS);
@@ -53,6 +72,7 @@ DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateV
 // 撤销订阅
 DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
     console.log('DphotosPairCharacteristic - onUnsubscribe');
+    this._value = '';
     this._updateValueCallback = null;
 };
 

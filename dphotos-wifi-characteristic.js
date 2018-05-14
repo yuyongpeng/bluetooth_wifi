@@ -4,6 +4,8 @@ var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 
 var bleno = require('bleno');
+var aes = require('./utils');
+var dphotos = require('./dphotos');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -23,6 +25,8 @@ var DphotosWifiCharacteristic = function() {
       })
     ]
   });
+    this._value = '';
+    this._updateValueCallback = null;
 };
 
 util.inherits(DphotosWifiCharacteristic, Characteristic);
@@ -31,14 +35,65 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
     if (offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
-    else if (data.length !== 1) {
-        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
-    }
-    else {
-        data_json = data.toString('hex');
-        pair_obj = JSON.parse(data_json)
-        ssid = pair_obj.ssid;
-        password = pair_obj.password;
+    else if (data.length > 0) {
+        data_str = data.toString('utf8');
+        var tp = data_str.substr(0, 1);
+        var ds = data_str.substr(1);
+        // console.log(tp);
+        // console.log(ds);
+        this._value += ds;
+        if (tp == '1'){
+            data_json = aes.decryption(data_str,dphotos.key(),dphotos.iv());
+            // var data_json = new Buffer(this._value, 'base64').toString('utf8');
+            console.log(this._value);
+            pair_obj = JSON.parse(data_json)
+            ssid = pair_obj.ssid;
+            password = pair_obj.password;
+            console.log(pair_obj);
+
+            execSync("wpa_cli -iwlan0 set_network " + id + " ssid " + ssid, function (error, stdout, stderr) {
+                var data = stdout.toString();
+                console.log(data);
+            });
+            execSync("wpa_cli -iwlan0 set_network " + id + " key_mgmt WPA-PSK ", function (error, stdout, stderr) {
+                var data = stdout.toString();
+                console.log(data);
+            });
+            execSync("wpa_cli -iwlan0 set_network " + id + " psk " + password, function (error, stdout, stderr) {
+                var data = stdout.toString();
+                console.log(data);
+            });
+            execSync("wpa_cli -iwlan0 enable_network " + id, function (error, stdout, stderr) {
+                var data = stdout.toString();
+                console.log(data);
+            });
+            execSync("wpa_cli -iwlan0 save ", function (error, stdout, stderr) {
+                var data = stdout.toString();
+                console.log(data);
+            });
+            // 如果注册了回调，就调用
+            if (this._updateValueCallback) {
+                console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                // 获得wifi的ip地址
+                wifi_ipv4=os.networkInterfaces().wlan0[0].address;
+                rt = {state: 'SUCESS', ip: wifi_ipv4};
+                // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+                rt_json = JSON.stringify(rt);
+                secrect = aes.encryption(rt_json, dphotos.key(), dphotos,iv());
+                var rt_base64 = new Buffer(rt_json).toString('base64')
+                this._updateValueCallback(secrect);
+            }
+            callback(this.RESULT_SUCCESS);
+        }
+        // {"ssid":"hard-chain","password":"hard-chain2017"}
+        // qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg==
+        // 0qaJDlAyIzXV25TbLCQy
+        // 0Sl0e8VLoFHAzcpB2saZ
+        // 0LShecf3QpT7jnY8t40y
+        // 0QhVbdhEX9ECKIqHC80O
+        // 07RGMlw6ndg==
+        // 0qaJDlAyIzXV25TbLCQy0Sl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O07RGMlw6ndg==
+
         // network = commands.getstatusoutput("wpa_cli -iwlan0 add_network")
         // id = network[1]
         // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s ssid '\"%s\"'" % (id, js['ssid']))
@@ -47,29 +102,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         // commands.getstatusoutput("wpa_cli -iwlan0 set_network %s psk '\"%s\"'" % (id, js['password']))
         // commands.getstatusoutput("wpa_cli -iwlan0 enable_network %s" % id)
         // commands.getstatusoutput("wpa_cli -iwlan0 save")
-
-        execSync("wpa_cli -iwlan0 set_network " + id + " ssid " + ssid, function (error, stdout, stderr) {
-            var data = stdout.toString();
-            console.log(data);
-        });
-        execSync("wpa_cli -iwlan0 set_network " + id + " key_mgmt WPA-PSK ", function (error, stdout, stderr) {
-            var data = stdout.toString();
-            console.log(data);
-        });
-        execSync("wpa_cli -iwlan0 set_network " + id + " psk " + password, function (error, stdout, stderr) {
-            var data = stdout.toString();
-            console.log(data);
-        });
-        execSync("wpa_cli -iwlan0 enable_network " + id, function (error, stdout, stderr) {
-            var data = stdout.toString();
-            console.log(data);
-        });
-        execSync("wpa_cli -iwlan0 save ", function (error, stdout, stderr) {
-            var data = stdout.toString();
-            console.log(data);
-        });
-        callback(this.RESULT_SUCCESS);
     }
+};
+
+// 订阅
+DphotosPubkeyCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+    console.log('DphotosPubkeyCharacteristic - onSubscribe');
+    this._updateValueCallback = updateValueCallback;
 };
 
 // 通知

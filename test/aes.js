@@ -81,47 +81,24 @@ var decryption = function (data, key, iv) {
     cipherChunks.push(decipher.final(clearEncoding));
     return cipherChunks.join('');
 }
+var text = '{"ssid":"hard-chain","password":"hard-chain2017"}';
+var key = "ExchangePasswordPasswordExchange";    // 长度必须32
+var iv = new Buffer(crypto.randomBytes(16))
+var ivstring = iv.toString('hex').slice(0, 16);   // 长度必须16
+console.log(ivstring);
+mima = encryption(text,key,ivstring);
+console.log(mima)
+console.log(decryption(mima,key, ivstring))
 
-// var key = "ExchangePasswordPasswordExchange";    // 长度必须32
+
+
+var crypto = require('crypto');
+var key = 'ExchangePasswordPasswordExchange';
 // var iv = new Buffer(crypto.randomBytes(16))
-// var ivstring = iv.toString('hex').slice(0, 16);   // 长度必须16
-// console.log(ivstring);
-// mima = encryption(text,key,ivstring);
-// console.log(mima)
-// console.log(decryption(mima,key, ivstring))
-//
-// var crypto = require('crypto');
-// var key = 'ExchangePasswordPasswordExchange';
-// var key = 'qawsedrftgyhujik';
-// // var  plaintext = '150.01';
-// var iv = new Buffer(crypto.randomBytes(16))
-// // ivstring = iv.toString('hex');
 // var ivstring = iv.toString('hex').slice(0, 16);
-//
-// var cipher = crypto.createCipheriv('aes-256-cbc', key, ivstring)
-// var  decipher = crypto.createDecipheriv('aes-256-cbc', key,ivstring);
-//
-// cipher.update(plaintext, 'utf8', 'base64');
-// var encryptedPassword = cipher.final('base64');
-// console.log(encryptedPassword)
+var cipher = crypto.createCipheriv('aes-256-cbc', key, ivstring)
+var  decipher = crypto.createDecipheriv('aes-256-cbc', key,ivstring);
 
-const key = crypto.pbkdf2Sync('secret', 'salt', 100000, 16, 'sha512');
-console.log(key);
-console.log(key.toString('hex'));
-const buf = Buffer.alloc(16);
-// crypto.randomFillSync(buf, (err, buf) => {
-//     if (err) throw err;
-//     console.log(buf.toString('hex'));
-// });
-//
-// crypto.randomFill(buf, 5, (err, buf) => {
-//     if (err) throw err;
-//     console.log(buf.toString('hex'));
-// });
-
-// The above is equivalent to the following:
-var x = crypto.randomFill(buf, (err, buf) => {
-    if (err) throw err;
-    console.log(buf.toString('hex'));
-});
-console.log(x);
+cipher.update(plaintext, 'utf8', 'base64');
+var encryptedPassword = cipher.final('base64');
+console.log(encryptedPassword)
