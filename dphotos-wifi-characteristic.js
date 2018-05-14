@@ -106,7 +106,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
 };
 
 // 订阅
-DphotosPubkeyCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+DphotosWifiCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
     console.log('DphotosPubkeyCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
 };
