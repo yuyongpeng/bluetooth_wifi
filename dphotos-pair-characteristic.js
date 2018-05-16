@@ -74,10 +74,10 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             callback(this.RESULT_SUCCESS);
         }
     }else if(data.length == 0){
-        console.log('fffffffffffffff');
+        console.log('data.length==0');
     }
     else {
-        console.log('444444');
+        console.log('default....');
     }
 };
 // 订阅

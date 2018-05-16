@@ -45,9 +45,18 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         if (tp == '1') {
             all_data = this._value;
             this._value = '';
-            data_json = aes.decryption(all_data, dphotos.key, dphotos.iv);
-            // var data_json = new Buffer(this._value, 'base64').toString('utf8');
             console.log(all_data);
+            try{
+                data_json = aes.decryption(all_data, dphotos.key, dphotos.iv);
+            }catch(err){
+                if (this._updateValueCallback) {
+                    rt = {state: 'FAIL', msg: err.message, errorno: 'D00401'};
+                    rt_json = JSON.stringify(rt);
+                    this._updateValueCallback(new Buffer(rt_json,'utf8'));
+                }
+                callback(this.RESULT_UNLIKELY_ERROR);
+            }
+            // var data_json = new Buffer(this._value, 'base64').toString('utf8');
             pair_obj = JSON.parse(data_json)
             ssid = pair_obj.ssid;
             password = pair_obj.password;
@@ -70,10 +79,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             command_5 = "wpa_cli -iwlan0 save ";
             wap_value = execSync(command_5).toString('utf8');
             console.log(command_5+"  ==  "+wap_value);
-            // execSync("wpa_cli -iwlan0 save ", function (error, stdout, stderr) {
-            //     var data = stdout.toString();
-            //     console.log(data);
-            // });
+
             // 如果注册了回调，就调用
             if (this._updateValueCallback) {
                 console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
