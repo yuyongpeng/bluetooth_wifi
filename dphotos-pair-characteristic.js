@@ -92,7 +92,7 @@ DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
     this._updateValueCallback = null;
 };
 
-DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
+DphotosPairCharacteristic.prototype.onReadRequest = function(offset, callback) {
     console.log(dphotos.key)
     var rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
     rt_json = JSON.stringify(rt);
