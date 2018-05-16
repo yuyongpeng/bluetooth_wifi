@@ -27,7 +27,8 @@
   ],
   "dependencies": {
     "bleno": "~0.5.0",
-    "node-rsa": "^0.4.2"
+    "node-rsa": "^0.4.2",
+    "wpa_supplicant": "^1.0.2"
   },
   "optionalDependencies": {
     "bluetooth-hci-socket": "^0.5.1",
