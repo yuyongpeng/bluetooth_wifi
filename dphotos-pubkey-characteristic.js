@@ -23,7 +23,10 @@ util.inherits(DphotosPubkeyCharacteristic, Characteristic);
 
 DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
     console.log(dphotos.key)
-  callback(this.RESULT_SUCCESS, dphotos.key);
+    var rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+    rt_json = JSON.stringify(rt);
+    var rt_base64 = new Buffer(rt_json).toString('base64');
+    callback(this.RESULT_SUCCESS, new Buffer(rt_base64,'utf8'));
 };
 // 订阅
 DphotosPubkeyCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {

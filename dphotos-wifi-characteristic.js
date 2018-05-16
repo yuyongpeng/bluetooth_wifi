@@ -85,7 +85,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 rt_json = JSON.stringify(rt);
                 secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                 var rt_base64 = new Buffer(rt_json).toString('base64')
-                this._updateValueCallback(secrect);
+                this._updateValueCallback(new Buffer(secrect,'utf8'));
             }
         }
         if (!withoutResponse) {

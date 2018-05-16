@@ -46,7 +46,16 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             this._value = '';
             var data_json = new Buffer(all_data, 'base64').toString('utf8');
             console.log(all_data);
-            pair_obj = JSON.parse(data_json)
+            try{
+                pair_obj = JSON.parse(data_json)
+            }catch(err){
+                if (this._updateValueCallback) {
+                    rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};
+                    rt_json = JSON.stringify(rt);
+                    this._updateValueCallback(new Buffer(rt_json,'utf8'));
+                }
+                callback(this.RESULT_UNLIKELY_ERROR);
+            }
             username = pair_obj.username;
             mobile = pair_obj.mobile;
             console.log(pair_obj);
@@ -58,7 +67,7 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 rt_json = JSON.stringify(rt);
                 var rt_base64 = new Buffer(rt_json).toString('base64');
                 // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
-                this._updateValueCallback(rt_base64);
+                this._updateValueCallback(new Buffer(rt_base64,'utf8'));
             }
         }
         if(! withoutResponse){
@@ -81,6 +90,14 @@ DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
     console.log('DphotosPairCharacteristic - onUnsubscribe');
     this._value = '';
     this._updateValueCallback = null;
+};
+
+DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
+    console.log(dphotos.key)
+    var rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+    rt_json = JSON.stringify(rt);
+    var rt_base64 = new Buffer(rt_json).toString('base64');
+    callback(this.RESULT_SUCCESS, new Buffer(rt_base64,'utf8'));
 };
 
 // 通知

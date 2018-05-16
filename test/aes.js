@@ -75,22 +75,42 @@ var decryption = function (data, key, iv) {
     var clearEncoding = 'utf8';
     var cipherEncoding = 'base64';
     var cipherChunks = [];
-    var decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    var decipher = crypto.createDecipheriv('aes-256-ebc', key, iv);
     decipher.setAutoPadding(true);
     cipherChunks.push(decipher.update(data, cipherEncoding, clearEncoding));
     cipherChunks.push(decipher.final(clearEncoding));
     return cipherChunks.join('');
 }
-var text = '{"ssid":"hard-chain","password":"hard-chain2017"}';
+var text = '{"username":"yuyongpeng", "mobile":"12345"}';
 var key = "ExchangePasswordPasswordExchange";    // 长度必须32
+//var key = "f21dab5f1q2w3e4r";    // 长度必须32
 var iv = new Buffer(crypto.randomBytes(16))
 var ivstring = iv.toString('hex').slice(0, 16);   // 长度必须16
 ivstring = 'f21dab5f0aca29c6'
 console.log(ivstring);
 mima = encryption(text,key,ivstring);
-mima = 'qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg=='
 console.log(mima)
-console.log(decryption(mima,key, ivstring))
+//mima = 'qaJDlAyIzXV25TbLCQySl0e8VLoFHAzcpB2saZLShecf3QpT7jnY8t40yQhVbdhEX9ECKIqHC80O7RGMlw6ndg=='
+//console.log(decryption(mima,key, ivstring))
+
+var crypto = require('crypto');
+// var Buffer = require('Buffer');
+
+var key = 'ExchangePasswordPasswordExchange'
+var iv = new Buffer('f21dab5f0aca29c6')
+// iv.fill(0)
+
+var text = '{"username":"yuyongpeng", "mobile":"12345"}'
+
+cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+output = cipher.update(text, 'utf8', 'base64')
+output += cipher.final('base64')
+
+console.log(output)
+
+
+
+
 
 
 
