@@ -48,6 +48,8 @@ io.sockets.on('connection', function (socket) {
         var action = data.action;
         var state = data.state;
         if(action == 'pairConfir' && state == 'sucess'){
+            // socket.broadcast.emit('node-sub',data);
+            socket.broadcast.emit('node-sub', {action:'pairConfir', state:'sucess', qt:'confir'});
             if(DphotoPairCharacteristic._updateValueCallback == null){
                 console.log("this._updateValueCallback == null");
             }
@@ -66,6 +68,6 @@ io.sockets.on('connection', function (socket) {
             DphotoPairCharacteristic._updateValueCallback(new Buffer(rt_base64,'utf8'));
         }
 
-        socket.broadcast.emit('node_sub', data);
+        socket.broadcast.emit('node-sub', data);
     });   // 定义socket on connection（连入）事件行为
 });

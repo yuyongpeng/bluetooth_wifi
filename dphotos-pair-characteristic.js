@@ -52,6 +52,18 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 pair_obj = JSON.parse(data_json)
                 // 将接收到的信息发送给qt，进行显示
                 socket.emit('node-to-qt', pair_obj);
+                socket.on('node-sub', function (data) {//等待界面的确认
+                    console.log(data);
+                    Dphotos.pair = true;
+                    if (this._updateValueCallback) {
+                        console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
+                        rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+                        rt_json = JSON.stringify(rt);
+                        var rt_base64 = new Buffer(rt_json).toString('base64');
+                        // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
+                        this._updateValueCallback(new Buffer(rt_base64,'utf8'));
+                    }
+                });
             }catch(err){
                 if (this._updateValueCallback) {
                     rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};

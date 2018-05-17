@@ -10,6 +10,7 @@ function Dphotos() {
     this.iv = 'f21dab5f0aca29c6';
     this.pubkey = '';
     this.prikey = '';
+    this.pair = false; // 初始，配对不成功。
 
 }
 
