@@ -4,6 +4,7 @@ var dphotos = require('./dphotos');
 var aes = require('./utils');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
+var socket = require('socket.io-client')('http://localhost:8081');
 
 var DphotosPairCharacteristic = function() {
     DphotosPairCharacteristic.super_.call(this, {
@@ -48,6 +49,8 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             console.log(all_data);
             try{
                 pair_obj = JSON.parse(data_json)
+                // 将接收到的信息发送给qt，进行显示
+                socket.emit('node-to-qt', pair_obj);
             }catch(err){
                 if (this._updateValueCallback) {
                     rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};

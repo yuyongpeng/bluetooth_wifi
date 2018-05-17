@@ -5,6 +5,9 @@ var http = require('http'), io = require('socket.io');
 var app = http.createServer(), io = io.listen(app);
 app.listen(8081, '127.0.0.1');
 
+var DphotoPairCharacteristic = require('./dphotos-pair-characteristic');
+var dphotos = require('./dphotos');
+
 // var io = require('socket.io')(80);
 
 // 用于存储所有socket以广播数据
@@ -39,8 +42,20 @@ io.sockets.on('connection', function (socket) {
 
     // QT界面给nodejs传递配置成功的状态（qt界面按下了"确定"按钮）
     socket.on('qt-to-node', function (data) {
-        // 将消息发生给订阅者
+        // 将消息发送给订阅者
         console.log('receive: ' + data);
+        var x = {action:'bluetooth', state:'sucess'};
+        var action = data.action;
+        if(action == 'pairConfir'){
+            // 在界面上按下了配对确定按钮
+            rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+            rt_json = JSON.stringify(rt);
+            var rt_base64 = new Buffer(rt_json).toString('base64');
+            // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
+            // this._updateValueCallback(new Buffer(rt_base64,'utf8'));
+            DphotoPairCharacteristic._updateValueCallback(new Buffer(rt_base64,'utf8'));
+        }
+
         socket.broadcast.emit('node_sub', data);
     });   // 定义socket on connection（连入）事件行为
 });

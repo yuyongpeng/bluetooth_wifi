@@ -26,4 +26,11 @@ $ cd bluetooth_wifi
 $ npm install
 
 
+## 全局安装forever，
+$ npm install -g forever
 
+## 启动websocket
+vim /etc/rc.local
+node /home/pi/bluetooth_wifi/websocket.js > /home/pi/blue.log &
+/usr/local/node/bin/forever -o /home/pi/bluetooth_wifi/websocket-out.log -e /home/pi/bluetooth_wifi/websocket-err.log /home/pi/bluetooth_wifi/websocket.js
+/usr/local/node/bin/forever -o /home/pi/bluetooth_wifi/bluetooth-out.log -e /home/pi/bluetooth_wifi/bluetooth-err.log /home/pi/bluetooth_wifi/main.js
