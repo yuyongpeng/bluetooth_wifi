@@ -46,7 +46,8 @@ io.sockets.on('connection', function (socket) {
         console.log('receive: ' + data);
         var x = {action:'bluetooth', state:'sucess'};
         var action = data.action;
-        if(action == 'pairConfir'){
+        var state = data.state;
+        if(action == 'pairConfir' && state == 'sucess'){
             // 在界面上按下了配对确定按钮
             rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
             rt_json = JSON.stringify(rt);

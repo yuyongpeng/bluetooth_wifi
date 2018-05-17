@@ -5,6 +5,7 @@ var aes = require('./utils');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 var socket = require('socket.io-client')('http://localhost:8081');
+global.DphotosPairCharacteristic_update = null;
 
 var DphotosPairCharacteristic = function() {
     DphotosPairCharacteristic.super_.call(this, {
@@ -87,12 +88,14 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
 DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
     console.log('DphotosPairCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
+    global.DphotosPairCharacteristic_update = updateValueCallback;
 };
 // 撤销订阅
 DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
     console.log('DphotosPairCharacteristic - onUnsubscribe');
     this._value = '';
     this._updateValueCallback = null;
+    global.DphotosPairCharacteristic_update = null;
 };
 
 DphotosPairCharacteristic.prototype.onReadRequest = function(offset, callback) {
