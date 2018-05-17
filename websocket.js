@@ -43,11 +43,20 @@ io.sockets.on('connection', function (socket) {
     // QT界面给nodejs传递配置成功的状态（qt界面按下了"确定"按钮）
     socket.on('qt-to-node', function (data) {
         // 将消息发送给订阅者
-        console.log('receive: ' + data);
+        console.log('receive: ' + JSON.stringify(data));
         var x = {action:'bluetooth', state:'sucess'};
         var action = data.action;
         var state = data.state;
         if(action == 'pairConfir' && state == 'sucess'){
+            if(DphotoPairCharacteristic._updateValueCallback == null){
+                console.log("this._updateValueCallback == null");
+            }
+            if(global.DphotosPairCharacteristic_update == null){
+                console.log("global.DphotosPairCharacteristic_update == null ");
+            }
+            if(DphotosPairCharacteristic.xx() == null){
+                console.log("global.DphotosPairCharacteristic_update == null ");
+            }
             // 在界面上按下了配对确定按钮
             rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
             rt_json = JSON.stringify(rt);

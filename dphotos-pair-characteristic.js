@@ -65,14 +65,14 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             console.log(pair_obj);
 
             // 如果注册了回调，就调用
-            if (this._updateValueCallback) {
+            /*if (this._updateValueCallback) {
                 console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
                 rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
                 rt_json = JSON.stringify(rt);
                 var rt_base64 = new Buffer(rt_json).toString('base64');
                 // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
                 this._updateValueCallback(new Buffer(rt_base64,'utf8'));
-            }
+            }*/
         }
         if(! withoutResponse){
             callback(this.RESULT_SUCCESS);
@@ -89,6 +89,7 @@ DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateV
     console.log('DphotosPairCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
     global.DphotosPairCharacteristic_update = updateValueCallback;
+    DphotosPairCharacteristic.prototype.xx = updateValueCallback;
 };
 // 撤销订阅
 DphotosPairCharacteristic.prototype.onUnsubscribe = function() {
