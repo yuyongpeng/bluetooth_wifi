@@ -47,29 +47,6 @@ io.sockets.on('connection', function (socket) {
         var x = {action:'bluetooth', state:'sucess'};
         var action = data.action;
         var state = data.state;
-        if(action == 'pairConfir' && state == 'sucess'){
-            // socket.broadcast.emit('node-sub',data);
-            socket.broadcast.emit('node-sub', {action:'pairConfir', state:'sucess', qt:'confir'});
-
-
-            if(DphotoPairCharacteristic._updateValueCallback == null){
-                console.log("this._updateValueCallback == null");
-            }
-            if(global.DphotosPairCharacteristic_update == null){
-                console.log("global.DphotosPairCharacteristic_update == null ");
-            }
-            if(DphotosPairCharacteristic.xx() == null){
-                console.log("global.DphotosPairCharacteristic_update == null ");
-            }
-            // 在界面上按下了配对确定按钮
-            rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
-            rt_json = JSON.stringify(rt);
-            var rt_base64 = new Buffer(rt_json).toString('base64');
-            // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
-            // this._updateValueCallback(new Buffer(rt_base64,'utf8'));
-            DphotoPairCharacteristic._updateValueCallback(new Buffer(rt_base64,'utf8'));
-        }
-
         socket.broadcast.emit('node-sub', data);
     });   // 定义socket on connection（连入）事件行为
 });

@@ -6,6 +6,8 @@ var execSync = require('child_process').execSync;
 var bleno = require('bleno');
 var aes = require('./utils');
 var dphotos = require('./dphotos');
+var http = require('http');
+var socket = require('socket.io-client')('http://localhost:8081');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -130,23 +132,65 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             command_4 = "wpa_cli -iwlan0 enable_network " + network_id;
             wap_value = execSync(command_4).toString('utf8');
             console.log(command_4+"  ==  "+wap_value);
-            command_5 = "wpa_cli -iwlan0 save ";
+            command_5 = "wpa_cli -iwlan0 select_network " + network_id;
             wap_value = execSync(command_5).toString('utf8');
             console.log(command_5+"  ==  "+wap_value);
+            command_6 = "wpa_cli -iwlan0 save ";
+            wap_value = execSync(command_6).toString('utf8');
+            console.log(command_6+"  ==  "+wap_value);
+            command_7 = "wpa_cli -iwlan0 reconfigure ";
+            wap_value = execSync(command_7).toString('utf8');
+            console.log(command_7+"  ==  "+wap_value);
+
+            // 测试网络的连通性
+            http.get('http://www.baidu.com/', (res) => {
+                console.log('STATUS:' + res.statusCode);
+                if(res.statusCode == 200){
+                    // 将接收到的信息发送给qt，进行显示
+                    wifi_obj = {action:'wifi', state: 'SUCESS'};
+                    socket.emit('node-to-qt', wifi_obj);
+                    // 如果注册了回调，就调用
+                    if (this._updateValueCallback) {
+                        console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                        // 获得wifi的ip地址
+                        wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+                        console.log(wifi_ipv4);
+                        rt = {state: 'SUCESS', ip: wifi_ipv4};
+                        // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+                        rt_json = JSON.stringify(rt);
+                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        // var rt_base64 = new Buffer(rt_json).toString('base64')
+                        this._updateValueCallback(new Buffer(secrect,'utf8'));
+                    }
+                }else{
+                    // 将接收到的信息发送给qt，进行显示
+                    wifi_obj = {action:'wifi', state: 'FAIL'};
+                    socket.emit('node-to-qt', wifi_obj);
+                    // 如果注册了回调，就调用
+                    if (this._updateValueCallback) {
+                        console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                        rt = {state: 'FAIL', msg:'wifi can not connect to www', errorno:'1002'};
+                        rt_json = JSON.stringify(rt);
+                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        // var rt_base64 = new Buffer(rt_json).toString('base64')
+                        this._updateValueCallback(new Buffer(secrect,'utf8'));
+                    }
+                }
+            });
 
             // 如果注册了回调，就调用
-            if (this._updateValueCallback) {
-                console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
-                // 获得wifi的ip地址
-                wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
-                console.log(wifi_ipv4);
-                rt = {state: 'SUCESS', ip: wifi_ipv4};
-                // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
-                rt_json = JSON.stringify(rt);
-                secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                var rt_base64 = new Buffer(rt_json).toString('base64')
-                this._updateValueCallback(new Buffer(secrect,'utf8'));
-            }
+            // if (this._updateValueCallback) {
+            //     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+            //     // 获得wifi的ip地址
+            //     wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+            //     console.log(wifi_ipv4);
+            //     rt = {state: 'SUCESS', ip: wifi_ipv4};
+            //     // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+            //     rt_json = JSON.stringify(rt);
+            //     secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+            //     var rt_base64 = new Buffer(rt_json).toString('base64')
+            //     this._updateValueCallback(new Buffer(secrect,'utf8'));
+            // }
         }
         if (!withoutResponse) {
             callback(this.RESULT_SUCCESS);
@@ -177,6 +221,23 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
 DphotosWifiCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
     console.log('DphotosWifiCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
+    // socket.on('node-sub', function (data) {//等待界面的确认
+    //     console.log('node-sub');
+    //     var action = data.action;
+    //     var state = data.state;
+    //     if(action == 'wifi' && state == 'sucess'){
+    //         console.log(data);
+    //         // 配对成功设置一个标识，以后只要这个为true，就可以返回数据
+    //         dphotos.pair = true;
+    //         console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
+    //         rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+    //         rt_json = JSON.stringify(rt);
+    //         var rt_base64 = new Buffer(rt_json).toString('base64');
+    //         // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
+    //         updateValueCallback(new Buffer(rt_base64,'utf8'));
+    //     }
+    // });
+
 };
 
 // 通知

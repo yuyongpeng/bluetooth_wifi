@@ -32,3 +32,20 @@ for(var i=0;i<os.networkInterfaces().en0.length;i++){
 }
 console.log('----------local IP: '+IPv4);
 console.log('----------local host: '+hostName);
+
+
+var http = require('http');
+var options =
+    {
+        hostname : 'www.baidu.com',
+        port : 80,
+        method : 'POST',
+        path : '/',
+        handers:{}
+    };
+// var req = http.request(options,function(res){
+// });
+http.get('http://www.baidu.com/', (res) => {
+    console.log(typeof (res.statusCode));
+    console.log('STATUS:' + res.statusCode);
+});

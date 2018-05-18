@@ -5,7 +5,6 @@ var aes = require('./utils');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 var socket = require('socket.io-client')('http://localhost:8081');
-global.DphotosPairCharacteristic_update = null;
 
 var DphotosPairCharacteristic = function() {
     DphotosPairCharacteristic.super_.call(this, {
