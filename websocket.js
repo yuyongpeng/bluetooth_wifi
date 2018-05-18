@@ -50,6 +50,8 @@ io.sockets.on('connection', function (socket) {
         if(action == 'pairConfir' && state == 'sucess'){
             // socket.broadcast.emit('node-sub',data);
             socket.broadcast.emit('node-sub', {action:'pairConfir', state:'sucess', qt:'confir'});
+
+
             if(DphotoPairCharacteristic._updateValueCallback == null){
                 console.log("this._updateValueCallback == null");
             }

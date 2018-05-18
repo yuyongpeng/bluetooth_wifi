@@ -32,6 +32,18 @@ var DphotosWifiCharacteristic = function() {
 util.inherits(DphotosWifiCharacteristic, Characteristic);
 
 DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback){
+    if(! dphotos.pair){
+        // 如果没有在相册上按下确定，就不允许后续操作
+        if (this._updateValueCallback) {
+            console.log('DphotosWifiCharacteristic - pair=false');
+            rt = {state: 'FAIL'};
+            rt_json = JSON.stringify(rt);
+            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+            var rt_base64 = new Buffer(rt_json).toString('base64')
+            this._updateValueCallback(new Buffer(secrect,'utf8'));
+        }
+        callback(this.RESULT_UNLIKELY_ERROR);
+    }
     if (offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
@@ -58,21 +70,63 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             }
             // var data_json = new Buffer(this._value, 'base64').toString('utf8');
             pair_obj = JSON.parse(data_json)
+            bssid = pair_obj.bssid;
+            bssid = "50:bd:5f:38:c3:07";
             ssid = pair_obj.ssid;
             password = pair_obj.password;
             console.log(pair_obj);
             network_id = 0;
+            command_scan = "wpa_cli scan_result | grep "+ssid;
+            scan_result = execSync(command_scan).toString('utf8').replace(/[\r\n]/g,"");
+            var result_arr = scan_result.toString().split("nakedhub");
+            console.log(result_arr);
+            var encryption = ""; //默认是不需要密码的
+            for(var idx in result_arr){
+                var value = result_arr[idx];
+                if(value.length>0){
+                    var element = value.split("\t");
+                    console.log(element[3]);
+                    if(element[3] == '[ESS]'){
+                        console.log('ESS....');
+                    }
+                    // wep ，加密
+                    if(element[3] == '[WEP][ESS]'){
+                        encryption = 'wep'
+                    }
+                    var wpa2=/WPA2-PSK/, wpa=/WPA-PSK/;
+                    if(wpa2.test(element[3]) || wpa.test(element[3])){
+                        encryption = 'wpa'
+                    }
+                }
+            }
+            var arr = scan_result.toString().split(ssid);
+            console.log(arr);
+
             command_0 = "wpa_cli -iwlan0 add_network ";
             network_id = execSync(command_0).toString('utf8').replace(/[\r\n]/g,"");
             command_1 = "wpa_cli -iwlan0 set_network " + network_id + " ssid '\"" + ssid + "\"'";
             wap_value = execSync(command_1).toString('utf8');
             console.log(command_1+"  ==  "+wap_value);
-            command_2 = "wpa_cli -iwlan0 set_network " + network_id + " key_mgmt WPA-PSK ";
-            wap_value = execSync(command_2).toString('utf8');
-            console.log(command_2+"  ==  "+wap_value);
-            command_3 = "wpa_cli -iwlan0 set_network " + network_id + " psk '\"" + password + "\"'";
-            wap_value = execSync(command_3).toString('utf8');
-            console.log(command_3+"  ==  "+wap_value);
+            switch(encryption){
+                case "":
+                    command_2 = "wpa_cli -iwlan0 set_network " + network_id + " key_mgmt NONE ";
+                    wap_value = execSync(command_2).toString('utf8');
+                    console.log(command_2+"  ==  "+wap_value);
+                    break;
+                case "wpa":
+                    command_3 = "wpa_cli -iwlan0 set_network " + network_id + " psk '\"" + password + "\"'";
+                    wap_value = execSync(command_3).toString('utf8');
+                    console.log(command_3+"  ==  "+wap_value);
+                    break;
+                case "wep":
+                    command_2 = "wpa_cli -iwlan0 set_network " + network_id + " key_mgmt NONE ";
+                    wap_value = execSync(command_2).toString('utf8');
+                    console.log(command_2+"  ==  "+wap_value);
+                    command_3 = "wpa_cli -iwlan0 set_network " + network_id + " wep_key0 '\"" + password + "\"'";
+                    wap_value = execSync(command_3).toString('utf8');
+                    console.log(command_3+"  ==  "+wap_value);
+                    break;
+            }
             command_4 = "wpa_cli -iwlan0 enable_network " + network_id;
             wap_value = execSync(command_4).toString('utf8');
             console.log(command_4+"  ==  "+wap_value);

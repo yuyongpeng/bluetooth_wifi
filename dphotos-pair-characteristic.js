@@ -52,18 +52,6 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 pair_obj = JSON.parse(data_json)
                 // 将接收到的信息发送给qt，进行显示
                 socket.emit('node-to-qt', pair_obj);
-                socket.on('node-sub', function (data) {//等待界面的确认
-                    console.log(data);
-                    Dphotos.pair = true;
-                    if (this._updateValueCallback) {
-                        console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
-                        rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
-                        rt_json = JSON.stringify(rt);
-                        var rt_base64 = new Buffer(rt_json).toString('base64');
-                        // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
-                        this._updateValueCallback(new Buffer(rt_base64,'utf8'));
-                    }
-                });
             }catch(err){
                 if (this._updateValueCallback) {
                     rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};
@@ -72,8 +60,6 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 }
                 callback(this.RESULT_UNLIKELY_ERROR);
             }
-            username = pair_obj.username;
-            mobile = pair_obj.mobile;
             console.log(pair_obj);
 
             // 如果注册了回调，就调用
@@ -100,8 +86,22 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
 DphotosPairCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
     console.log('DphotosPairCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
-    global.DphotosPairCharacteristic_update = updateValueCallback;
-    DphotosPairCharacteristic.prototype.xx = updateValueCallback;
+    socket.on('node-sub', function (data) {//等待界面的确认
+        console.log('node-sub');
+        var action = data.action;
+        var state = data.state;
+        if(action == 'pairConfir' && state == 'sucess'){
+            console.log(data);
+            // 配对成功设置一个标识，以后只要这个为true，就可以返回数据
+            dphotos.pair = true;
+            console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
+            rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+            rt_json = JSON.stringify(rt);
+            var rt_base64 = new Buffer(rt_json).toString('base64');
+            // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
+            updateValueCallback(new Buffer(rt_base64,'utf8'));
+        }
+    });
 };
 // 撤销订阅
 DphotosPairCharacteristic.prototype.onUnsubscribe = function() {

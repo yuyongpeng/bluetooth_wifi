@@ -11,7 +11,6 @@ function Dphotos() {
     this.pubkey = '';
     this.prikey = '';
     this.pair = false; // 初始，配对不成功。
-
 }
 
 util.inherits(Dphotos, events.EventEmitter);
