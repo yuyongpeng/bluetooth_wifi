@@ -49,3 +49,11 @@ http.get('http://www.baidu.com/', (res) => {
     console.log(typeof (res.statusCode));
     console.log('STATUS:' + res.statusCode);
 });
+var co = require('co');
+var gen = function*() { // <== generator
+    var f1 = yield http.get('http://www.baidu.com/', (res) => {
+    });
+
+    console.log('---'+f1.toString());
+};
+co(gen); //自动运行gen方法,会顺序执行函数的内容，因为返回的是Promise，所以是同步的。

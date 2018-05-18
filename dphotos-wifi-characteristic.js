@@ -9,6 +9,8 @@ var dphotos = require('./dphotos');
 var http = require('http');
 var socket = require('socket.io-client')('http://localhost:8081');
 
+var co = require('co');
+
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
@@ -141,42 +143,45 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             command_7 = "wpa_cli -iwlan0 reconfigure ";
             wap_value = execSync(command_7).toString('utf8');
             console.log(command_7+"  ==  "+wap_value);
-
-            // 测试网络的连通性
-            http.get('http://www.baidu.com/', (res) => {
-                console.log('STATUS:' + res.statusCode);
-                if(res.statusCode == 200){
-                    // 将接收到的信息发送给qt，进行显示
-                    wifi_obj = {action:'wifi', state: 'SUCESS'};
-                    socket.emit('node-to-qt', wifi_obj);
-                    // 如果注册了回调，就调用
-                    if (this._updateValueCallback) {
-                        console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
-                        // 获得wifi的ip地址
-                        wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
-                        console.log(wifi_ipv4);
-                        rt = {state: 'SUCESS', ip: wifi_ipv4};
-                        // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
-                        rt_json = JSON.stringify(rt);
-                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                        // var rt_base64 = new Buffer(rt_json).toString('base64')
-                        this._updateValueCallback(new Buffer(secrect,'utf8'));
-                    }
-                }else{
-                    // 将接收到的信息发送给qt，进行显示
-                    wifi_obj = {action:'wifi', state: 'FAIL'};
-                    socket.emit('node-to-qt', wifi_obj);
-                    // 如果注册了回调，就调用
-                    if (this._updateValueCallback) {
-                        console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
-                        rt = {state: 'FAIL', msg:'wifi can not connect to www', errorno:'1002'};
-                        rt_json = JSON.stringify(rt);
-                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                        // var rt_base64 = new Buffer(rt_json).toString('base64')
-                        this._updateValueCallback(new Buffer(secrect,'utf8'));
-                    }
+            var statusCode = 400;
+            var gen = function*() { // <== generator
+                var code = yield http.get('http://www.baidu.com/', (res) => {
+                });
+                statusCode = code;
+            };
+            co(gen); //自动运行gen方法,会顺序执行函数的内容，因为返回的是Promise，所以是同步的。
+            if(statusCode == 200){
+                // 将接收到的信息发送给qt，进行显示
+                wifi_obj = {action:'wifi', state: 'SUCESS'};
+                socket.emit('node-to-qt', wifi_obj);
+                // 如果注册了回调，就调用
+                if (this._updateValueCallback) {
+                    console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                    // 获得wifi的ip地址
+                    wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+                    console.log(wifi_ipv4);
+                    rt = {state: 'SUCESS', ip: wifi_ipv4};
+                    // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+                    rt_json = JSON.stringify(rt);
+                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                    // var rt_base64 = new Buffer(rt_json).toString('base64')
+                    this._updateValueCallback(new Buffer(secrect,'utf8'));
                 }
-            });
+            }else{
+                // 将接收到的信息发送给qt，进行显示
+                wifi_obj = {action:'wifi', state: 'FAIL'};
+                socket.emit('node-to-qt', wifi_obj);
+                // 如果注册了回调，就调用
+                if (this._updateValueCallback) {
+                    console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                    rt = {state: 'FAIL', msg:'wifi can not connect to www', errorno:'1002'};
+                    rt_json = JSON.stringify(rt);
+                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                    // var rt_base64 = new Buffer(rt_json).toString('base64')
+                    this._updateValueCallback(new Buffer(secrect,'utf8'));
+                }
+            }
+
 
             // 如果注册了回调，就调用
             // if (this._updateValueCallback) {

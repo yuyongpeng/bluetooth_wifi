@@ -59,7 +59,6 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 }
                 callback(this.RESULT_UNLIKELY_ERROR);
             }
-            console.log(pair_obj);
 
             // 如果注册了回调，就调用
             /*if (this._updateValueCallback) {
