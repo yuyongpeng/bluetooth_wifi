@@ -57,3 +57,22 @@ var gen = function*() { // <== generator
     console.log('---'+f1.toString());
 };
 co(gen); //自动运行gen方法,会顺序执行函数的内容，因为返回的是Promise，所以是同步的。
+
+
+var rp = require("request-promise");
+var sleep = require('sleep');
+
+var options = {
+    uri: 'http://www.baidu.com',
+    headers: {
+        'User-Agent': 'safari'
+    },
+    resolveWithFullResponse: true
+};
+rp(options).then(function(repos){
+    sleep.sleep(5);
+    console.log(repos.statusCode);
+}).catch(function(err){
+    console.log(err);
+});
+
