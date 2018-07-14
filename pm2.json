@@ -1,0 +1,33 @@
+{
+    "apps": [
+        {
+            "name": "bluetooth_controller",
+            "interperter": "node",
+            "script": "main.js",
+            "cwd": "/opt/bluetooth_wifi",
+            "instances": 1,
+            "watch": [
+                "bin",
+                "routes"
+            ],
+            "ignore_watch": [
+                "node_modules",
+                "logs",
+                "public"
+            ],
+            "watch_options": {
+                "followSymlinks": false
+            },
+            "error_file": "./logs/app-err.log",
+            "out_file": "./logs/app-out.log",
+            "env": {
+                "NODE_ENV": "production"
+            },
+            "env_test": {
+                "NODE_ENV": "test",
+                "REMOTE_ADDR": "http://wtest.example.com/"
+            }
+        }
+    ]
+}
+            
