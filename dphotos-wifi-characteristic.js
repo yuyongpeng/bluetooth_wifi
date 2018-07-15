@@ -10,7 +10,11 @@ var dphotos = require('./dphotos');
 var http = require('http');
 var socket = require('socket.io-client')('http://localhost:8081');
 var mqtt = require('mqtt')
-var client  = mqtt.connect('mqtt://127.0.0.1')
+var options = {
+    port: 1883,
+    host: '127.0.0.1',
+  }
+var client  = mqtt.connect(options)
 
 var co = require('co');
 var rp = require("request-promise");
@@ -85,17 +89,19 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             password = pair_obj.password;
             console.log(pair_obj);
             var wifi_set = {
-                "type": "wifi",
-                "data": {
-                    "action": "connect",
-                    "ssid": ssid,
-                    "authmode": "wpa2",
-                    "key": password
+                "type": "request",
+                "system": "wifi",
+                "action": "setting",
+                "parameters":{
+                    "ssid": wifi,
+                    "pass": password
                 },
+                "key": "openwrt148"
             }
+            var client  = mqtt.connect(options)
             client.on('connect', function(){
                 // client.subscribe('msg') //订阅msg的数据
-                client.publish('msg', 'Hello mqtt')
+                client.publish('msg', JSON.stringify(wifi_set))
                 client.end()
             })
             if (this._updateValueCallback) {

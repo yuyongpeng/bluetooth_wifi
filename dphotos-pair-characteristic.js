@@ -46,29 +46,30 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             all_data = this._value;
             this._value = '';
             var data_json = new Buffer(all_data, 'base64').toString('utf8');
+            console.log('777777777')
             console.log(all_data);
-            try{
-                pair_obj = JSON.parse(data_json)
-                // 将接收到的信息发送给qt，进行显示
-                socket.emit('node-to-qt', pair_obj);
-            }catch(err){
-                if (this._updateValueCallback) {
-                    rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};
-                    rt_json = JSON.stringify(rt);
-                    this._updateValueCallback(new Buffer(rt_json,'utf8'));
-                }
-                callback(this.RESULT_UNLIKELY_ERROR);
-            }
+            // try{
+            //     pair_obj = JSON.parse(data_json)
+            //     // 将接收到的信息发送给qt，进行显示
+            //     socket.emit('node-to-qt', pair_obj);
+            // }catch(err){
+            //     if (this._updateValueCallback) {
+            //         rt = {state: 'FAIL', msg: err.message, errorno: 'D00301'};
+            //         rt_json = JSON.stringify(rt);
+            //         this._updateValueCallback(new Buffer(rt_json,'utf8'));
+            //     }
+            //     callback(this.RESULT_UNLIKELY_ERROR);
+            // }
 
             // 如果注册了回调，就调用
-            /*if (this._updateValueCallback) {
+            if (this._updateValueCallback) {
                 console.log('DphotosPairCharacteristic - onWriteRequest: notifying');
                 rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
                 rt_json = JSON.stringify(rt);
                 var rt_base64 = new Buffer(rt_json).toString('base64');
                 // data_json = aes.encryption(all_data, dphotos.key, dphotos.iv);
                 this._updateValueCallback(new Buffer(rt_base64,'utf8'));
-            }*/
+            }
         }
         if(! withoutResponse){
             callback(this.RESULT_SUCCESS);
