@@ -2,23 +2,21 @@ var util = require('util');
 var os = require('os');
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
-
+var sleep = require('sleep');
 var bleno = require('bleno');
 var aes = require('./utils');
-var sleep = require('sleep');
 var dphotos = require('./dphotos');
 var http = require('http');
 var socket = require('socket.io-client')('http://localhost:8081');
 var mqtt = require('mqtt')
 var options = {
-    port: 1883,
-    host: '127.0.0.1',
-  }
-var client  = mqtt.connect(options)
+  port: 1883,
+  host: '127.0.0.1',
+}
+//var client  = mqtt.connect(options)
 
 var co = require('co');
 var rp = require("request-promise");
-var sleep = require('sleep');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -88,33 +86,42 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             ssid = pair_obj.ssid;
             password = pair_obj.password;
             console.log(pair_obj);
+
             var wifi_set = {
                 "type": "request",
                 "system": "wifi",
                 "action": "setting",
                 "parameters":{
-                    "ssid": wifi,
+                    "ssid": ssid,
                     "pass": password
                 },
                 "key": "openwrt148"
             }
-            var client  = mqtt.connect(options)
-            client.on('connect', function(){
-                // client.subscribe('msg') //订阅msg的数据
-                client.publish('msg', JSON.stringify(wifi_set))
-                client.end()
-            })
+            var client  = mqtt.connect(options);
             if (this._updateValueCallback) {
-                console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
-                // 获得wifi的ip地址
-                wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
-                console.log(wifi_ipv4);
-                rt = {state: 'SUCESS', ip: wifi_ipv4};
-                // rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
-                rt_json = JSON.stringify(rt);
-                secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                // var rt_base64 = new Buffer(rt_json).toString('base64')
-                this._updateValueCallback(new Buffer(secrect,'utf8'));
+                var client  = mqtt.connect(options)
+                client.on('connect', function(){
+                    // client.subscribe('msg') //订阅msg的数据
+                    client.publish('msg', JSON.stringify(wifi_set))
+                    sleep.sleep(30);
+                    console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
+                    // 获得wifi的ip地址
+                   try{
+                    wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+                    rt = {state: 'SUCESS', ip: wifi_ipv4};
+                    rt_json = JSON.stringify(rt);
+                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                    // var rt_base64 = new Buffer(rt_json).toString('base64')
+                    this._updateValueCallback(new Buffer(secrect,'utf8'));
+                    }catch(e){
+                        rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+                        rt_json = JSON.stringify(rt);
+                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+		                console.log(secrect);
+                        this._updateValueCallback(new Buffer(secrect,'utf8'));
+                    }
+                    client.end()
+                }.bind(this));
             }
         }
         if (!withoutResponse) {
