@@ -44,6 +44,7 @@ var DphotosWifiCharacteristic = function () {
 util.inherits(DphotosWifiCharacteristic, Characteristic);
 
 DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+    var self = this;
     // if(! dphotos.pair){
     //     // 如果没有在相册上按下确定，就不允许后续操作
     //     if (this._updateValueCallback) {
@@ -119,7 +120,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         console.log(rt);
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                                        this._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                        self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     }
                                     sleep.sleep(1);
                                 });
