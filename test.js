@@ -1,6 +1,21 @@
 /**
  * Created by yuyongpeng on 2018/5/14.
  */
+var request = require('request');
+request('http://www.baidu.com', function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+    console.log(body) // 打印google首页
+  }
+})
+exit(0);
+const asyncReadFile = async function () { //声明async方法
+    const f1 = await readFile('/etc/fstab'); //等待执行完毕
+    const f2 = await readFile('/etc/shells'); //等待执行完毕
+    console.log(f1.toString());
+    console.log(f2.toString());
+};
+asyncReadFile();
+
 
 var u = require('./utils');
 

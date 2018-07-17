@@ -44,18 +44,18 @@ var DphotosWifiCharacteristic = function() {
 util.inherits(DphotosWifiCharacteristic, Characteristic);
 
 DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback){
-    if(! dphotos.pair){
-        // 如果没有在相册上按下确定，就不允许后续操作
-        if (this._updateValueCallback) {
-            console.log('DphotosWifiCharacteristic - pair=false');
-            rt = {state: 'FAIL'};
-            rt_json = JSON.stringify(rt);
-            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-            var rt_base64 = new Buffer(rt_json).toString('base64')
-            this._updateValueCallback(new Buffer(secrect,'utf8'));
-        }
-        callback(this.RESULT_UNLIKELY_ERROR);
-    }
+    // if(! dphotos.pair){
+    //     // 如果没有在相册上按下确定，就不允许后续操作
+    //     if (this._updateValueCallback) {
+    //         console.log('DphotosWifiCharacteristic - pair=false');
+    //         rt = {state: 'FAIL'};
+    //         rt_json = JSON.stringify(rt);
+    //         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+    //         var rt_base64 = new Buffer(rt_json).toString('base64')
+    //         this._updateValueCallback(new Buffer(secrect,'utf8'));
+    //     }
+    //     callback(this.RESULT_UNLIKELY_ERROR);
+    // }
     if (offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }

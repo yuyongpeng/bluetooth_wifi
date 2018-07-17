@@ -8,7 +8,6 @@ var aes = require('./utils');
 var dphotos = require('./dphotos');
 var http = require('http');
 var wpa_cli = require('wireless-tools/wpa_cli');
-//var client  = mqtt.connect(options)
 
 var co = require('co');
 var rp = require("request-promise");
