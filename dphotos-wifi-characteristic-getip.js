@@ -58,4 +58,4 @@ DphotosWifiCharacteristicGetip.prototype.onReadRequest = function (offset, callb
     }
 };
 
-module.exports = DphotosWifiCharacteristic;
+module.exports = DphotosWifiCharacteristicGetip;
