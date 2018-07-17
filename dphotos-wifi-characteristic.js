@@ -106,7 +106,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                 client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
-                    sleep.sleep(5);
+                    sleep.sleep(10);
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
@@ -161,6 +161,9 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         //         });
                         //     })(i);
                         // }
+                        execSync('dhclient -r wlan0');
+                        sleep.sleep(1);
+                        execSync('dhclient wlan0');
                         console.log('333');
                         if(over == false){
                             rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
