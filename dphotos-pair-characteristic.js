@@ -46,7 +46,6 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function(data, offset, with
             all_data = this._value;
             this._value = '';
             var data_json = new Buffer(all_data, 'base64').toString('utf8');
-            console.log('777777777')
             console.log(all_data);
             // try{
             //     pair_obj = JSON.parse(data_json)

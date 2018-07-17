@@ -124,6 +124,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                        console.log(rt_json);
                                         self._updateValueCallback(new Buffer(secrect, 'utf8')); 
                                         over = true;
                                     }
@@ -131,6 +132,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         console.dir('222');
                                         rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
                                         rt_json = JSON.stringify(rt);
+                                        console.log(rt_json);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                         self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                         over = true;
