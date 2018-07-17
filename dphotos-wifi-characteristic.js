@@ -140,6 +140,10 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         resolve();
                                         return;
                                     }
+                                    if (status.wpa_state == 'COMPLETED' && status.ip == undefined) {
+                                        console.dir('aaaa');
+                                        execSync('dhclient wlan0');
+                                    }
                                     setTimeout(resolve, 1000);
                                 });
                             });
