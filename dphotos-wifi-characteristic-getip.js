@@ -16,7 +16,7 @@ var rp = require("request-promise");
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var DphotosWifiCharacteristic = function () {
+var DphotosWifiCharacteristicGetip = function () {
     DphotosWifiCharacteristic.super_.call(this, {
         uuid: 'D005',
         properties: ['read'],
@@ -35,7 +35,7 @@ var DphotosWifiCharacteristic = function () {
     this._updateValueCallback = null;
 };
 
-util.inherits(DphotosWifiCharacteristic, Characteristic);
+util.inherits(DphotosWifiCharacteristicGetip, Characteristic);
 
 DphotosWifiCharacteristic.prototype.onReadRequest = function (offset, callback) {
     if (this._updateValueCallback) {
