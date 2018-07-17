@@ -17,7 +17,7 @@ var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
 var DphotosWifiCharacteristicGetip = function () {
-    DphotosWifiCharacteristic.super_.call(this, {
+    DphotosWifiCharacteristicGetip.super_.call(this, {
         uuid: 'D005',
         properties: ['read'],
         descriptors: [
