@@ -64,8 +64,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
         data_str = data.toString('utf8');
         var tp = data_str.substr(0, 1);
         var ds = data_str.substr(1);
-        console.log(tp);
-        console.log(ds);
+        // console.log(tp);
+        // console.log(ds);
         this._value += ds;
         if (tp == '1') {
             all_data = this._value;
@@ -102,40 +102,41 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
             var client = mqtt.connect(options);
             if (this._updateValueCallback) {
                 var client = mqtt.connect(options)
-                client.on('connect', async ()=>{
+                client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
-                    // sleep.sleep(30);
+                    sleep.sleep(3);
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
                     // 获得wifi的ip地址o
                     try {
-                            for (let i = 0; i < sum_second; i++) {
-                                console.log(i);
-                                await new Promise(function (resolve, reject) {
-                                    wpa_cli.status('wlan0', function (err, status) {
-                                        if (err) return reject(err);
-                                        console.dir('count = ' + i);
-                                        if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
-                                            rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
-                                            rt_json = JSON.stringify(rt);
-                                            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                                            self._updateValueCallback(new Buffer(secrect, 'utf8'));
-                                            i = sum_second;
-                                            resolve();
-                                            return;
-                                        }
-                                        if (count >= sum_second) {
-                                            rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
-                                            rt_json = JSON.stringify(rt);
-                                            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                                            self._updateValueCallback(new Buffer(secrect, 'utf8'));
-                                        }
-                                        setTimeout(resolve, 1000);
-                                    });
+                        for (let i = 0; i < sum_second; i++) {
+                            console.log(i);
+                            await new Promise(function (resolve, reject) {
+                                wpa_cli.status('wlan0', function (err, status) {
+                                    if (err) return reject(err);
+                                    console.dir('count = ' + i);
+                                    console.dir(status);
+                                    if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                                        rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+                                        rt_json = JSON.stringify(rt);
+                                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                        self._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                        i = sum_second;
+                                        resolve();
+                                        return;
+                                    }
+                                    if (count >= sum_second) {
+                                        rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
+                                        rt_json = JSON.stringify(rt);
+                                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                        self._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                    }
+                                    setTimeout(resolve, 1000);
                                 });
-                            }
+                            });
+                        }
 
                         // for (var i = sum_second; i >= 0; i--) {
                         //     ((i)=>{
