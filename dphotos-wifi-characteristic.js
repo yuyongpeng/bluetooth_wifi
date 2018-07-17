@@ -101,7 +101,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
             var client = mqtt.connect(options);
             if (this._updateValueCallback) {
                 var client = mqtt.connect(options)
-                client.on('connect', function () {
+                client.on('connect', ()=>{
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
                     // sleep.sleep(30);
@@ -111,7 +111,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                     // 获得wifi的ip地址
                     try {
                         for (var i = sum_second; i >= 0; i--) {
-                            (function (i) {
+                            ((i)=>{
                                 wpa_cli.status('wlan0', function (err, status) {
                                     console.dir('count = ' + i);
                                     if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
@@ -164,7 +164,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         this._updateValueCallback(new Buffer(secrect, 'utf8'));
                     }
                     client.end()
-                }.bind(this));
+                });
             }
         }
         if (!withoutResponse) {
