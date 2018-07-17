@@ -116,7 +116,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                             console.log(i);
                             await new Promise(function (resolve, reject) {
                                 wpa_cli.status('wlan0', function (err, status) {
-                                    if (err) return reject(err);
+                                    // if (err) return reject(err);
                                     console.dir('count = ' + i);
                                     console.dir(status);
                                     if (status == undefined) {
@@ -211,8 +211,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         // // var rt_base64 = new Buffer(rt_json).toString('base64')
                         // this._updateValueCallback(new Buffer(secrect,'utf8'));
                     } catch (e) {
-                        console.log(e);
                         console.log('888888');
+                        console.log(e);
                         rt = { state: 'FAIL', msg: 'wifi can not connect', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
