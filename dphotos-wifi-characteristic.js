@@ -196,6 +196,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         // // var rt_base64 = new Buffer(rt_json).toString('base64')
                         // this._updateValueCallback(new Buffer(secrect,'utf8'));
                     } catch (e) {
+                        console.log(e);
                         console.log('888888');
                         rt = { state: 'FAIL', msg: 'wifi can not connect', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
