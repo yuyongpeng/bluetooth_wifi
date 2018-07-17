@@ -119,13 +119,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     if (err) return reject(err);
                                     console.dir('count = ' + i);
                                     console.dir(status);
-                                    if(status == undefined){
+                                    if (status == undefined) {
                                         console.dir('1111');
                                         rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                         console.log(rt_json);
-                                        self._updateValueCallback(new Buffer(secrect, 'utf8')); 
+                                        self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                         over = true;
                                     }
                                     if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
@@ -161,11 +161,19 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         //         });
                         //     })(i);
                         // }
-                        execSync('dhclient -r wlan0');
-                        sleep.sleep(1);
-                        execSync('dhclient wlan0');
+                        await new Promise(function (resolve, reject) {
+                            wpa_cli.status('wlan0', function (err, status) {
+                                if (err) return reject(err);
+                                if (status != undefined) {
+                                    execSync('dhclient -r wlan0');
+                                    sleep.sleep(1);
+                                    execSync('dhclient wlan0');
+                                }
+                                resolve();
+                            });
+                        });
                         console.log('333');
-                        if(over == false){
+                        if (over == false) {
                             rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                             rt_json = JSON.stringify(rt);
                             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
