@@ -40,14 +40,14 @@ util.inherits(DphotosWifiCharacteristicGetip, Characteristic);
 DphotosWifiCharacteristicGetip.prototype.onReadRequest = function (offset, callback) {
     wpa_cli.status('wlan0', function (err, status) {
         console.dir(status);
-        if (status.ip == undefined) {
-            rt = { state: 'FAIL', msg: 'can not get ip address', errorno: '1003' };
+        if (status.wpa_state == 'station' && status.ip != undefined) {
+            rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
             rt_json = JSON.stringify(rt);
             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
             // this._updateValueCallback(new Buffer(secrect,'utf8'));
             callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
         } else {
-            rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+            rt = { state: 'FAIL', msg: 'can not get ip address', errorno: '1003' };
             rt_json = JSON.stringify(rt);
             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
             // this._updateValueCallback(new Buffer(secrect,'utf8'));
