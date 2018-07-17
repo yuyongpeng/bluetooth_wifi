@@ -18,8 +18,9 @@ async function loopArray() {
                     rt_json = JSON.stringify(rt);
                     // secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                 }
-                sleep.sleep(1);
-                resolve();
+                // sleep.sleep(1);
+                setTimeout(resolve, 1000);
+                //resolve();
             });
         });
     }
