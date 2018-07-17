@@ -161,17 +161,17 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         //         });
                         //     })(i);
                         // }
-                        await new Promise(function (resolve, reject) {
-                            wpa_cli.status('wlan0', function (err, status) {
-                                if (err) return reject(err);
-                                if (status != undefined) {
-                                    execSync('dhclient -r wlan0');
-                                    sleep.sleep(1);
-                                    execSync('dhclient wlan0');
-                                }
-                                resolve();
-                            });
-                        });
+                        // await new Promise(function (resolve, reject) {
+                        //     wpa_cli.status('wlan0', function (err, status) {
+                        //         if (err) return reject(err);
+                        //         if (status != undefined) {
+                        //             execSync('dhclient -r wlan0');
+                        //             sleep.sleep(1);
+                        //             execSync('dhclient wlan0');
+                        //         }
+                        //         resolve();
+                        //     });
+                        // });
                         console.log('333');
                         if (over == false) {
                             rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
