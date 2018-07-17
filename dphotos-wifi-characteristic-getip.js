@@ -48,7 +48,7 @@ DphotosWifiCharacteristic.prototype.onReadRequest = function (offset, callback) 
                 // this._updateValueCallback(new Buffer(secrect,'utf8'));
                 callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
             } else {
-                rt = { state: 'SUCESS', ip: status.ip, deviceid='51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+                rt = { state: 'SUCESS', ip: status.ip, deviceid:'51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
                 rt_json = JSON.stringify(rt);
                 secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                 // this._updateValueCallback(new Buffer(secrect,'utf8'));
