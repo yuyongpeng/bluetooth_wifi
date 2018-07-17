@@ -37,7 +37,7 @@ var DphotosWifiCharacteristicGetip = function () {
 
 util.inherits(DphotosWifiCharacteristicGetip, Characteristic);
 
-DphotosWifiCharacteristic.prototype.onReadRequest = function (offset, callback) {
+DphotosWifiCharacteristicGetip.prototype.onReadRequest = function (offset, callback) {
     if (this._updateValueCallback) {
         wpa_cli.status('wlan0', function (err, status) {
             console.dir(status);
