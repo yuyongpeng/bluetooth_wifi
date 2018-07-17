@@ -105,7 +105,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                 client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
-                    sleep.sleep(3);
+                    sleep.sleep(5);
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
@@ -118,7 +118,15 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     if (err) return reject(err);
                                     console.dir('count = ' + i);
                                     console.dir(status);
+                                    if(status == undefined){
+                                        console.dir('1111');
+                                        rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
+                                        rt_json = JSON.stringify(rt);
+                                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                        self._updateValueCallback(new Buffer(secrect, 'utf8')); 
+                                    }
                                     if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                                        console.dir('222');
                                         rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
@@ -128,6 +136,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         return;
                                     }
                                     if (count >= sum_second) {
+                                        console.dir('kkk');
                                         rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
@@ -154,11 +163,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         //         });
                         //     })(i);
                         // }
+                        console.log('333');
                         rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                         this._updateValueCallback(new Buffer(secrect, 'utf8'));
 
+                        console.log('444');
 
                         // for (var i = 0; i < sum_second; i++) {
                         //     wpa_cli.status('wlan0', function (err, status) {
