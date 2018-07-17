@@ -101,6 +101,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
             }
             var client = mqtt.connect(options);
             if (this._updateValueCallback) {
+                var over = false;
                 var client = mqtt.connect(options)
                 client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
@@ -124,6 +125,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                         self._updateValueCallback(new Buffer(secrect, 'utf8')); 
+                                        over = true;
                                     }
                                     if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
                                         console.dir('222');
@@ -131,16 +133,10 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         rt_json = JSON.stringify(rt);
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                         self._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                        over = true;
                                         i = sum_second;
                                         resolve();
                                         return;
-                                    }
-                                    if (count >= sum_second) {
-                                        console.dir('kkk');
-                                        rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
-                                        rt_json = JSON.stringify(rt);
-                                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                                        self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     }
                                     setTimeout(resolve, 1000);
                                 });
@@ -164,12 +160,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         //     })(i);
                         // }
                         console.log('333');
-                        rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
-                        rt_json = JSON.stringify(rt);
-                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                        this._updateValueCallback(new Buffer(secrect, 'utf8'));
-
-                        console.log('444');
+                        if(over == false){
+                            rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
+                            rt_json = JSON.stringify(rt);
+                            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                            this._updateValueCallback(new Buffer(secrect, 'utf8'));
+                            console.log('444');
+                        }
 
                         // for (var i = 0; i < sum_second; i++) {
                         //     wpa_cli.status('wlan0', function (err, status) {
@@ -197,7 +194,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         // // var rt_base64 = new Buffer(rt_json).toString('base64')
                         // this._updateValueCallback(new Buffer(secrect,'utf8'));
                     } catch (e) {
-                        rt = { state: 'SUCESS', msg: 'wifi can not connect', errorno: '1002' };
+                        console.log('888888');
+                        rt = { state: 'FAIL', msg: 'wifi can not connect', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                         console.log(secrect);
