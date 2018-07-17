@@ -11,8 +11,8 @@ var socket = require('socket.io-client')('http://localhost:8081');
 var wpa_cli = require('wireless-tools/wpa_cli');
 var mqtt = require('mqtt')
 var options = {
-  port: 1883,
-  host: '127.0.0.1',
+    port: 1883,
+    host: '127.0.0.1',
 }
 //var client  = mqtt.connect(options)
 
@@ -22,28 +22,28 @@ var rp = require("request-promise");
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var DphotosWifiCharacteristic = function() {
+var DphotosWifiCharacteristic = function () {
     DphotosWifiCharacteristic.super_.call(this, {
-    uuid: 'D004',
-    properties: ['read', 'write', 'notify'],
-    descriptors: [
-      new Descriptor({
-        uuid: 'D014',
-        value: 'set wifi'
-      }),
-      new Descriptor({
-        uuid: 'D024',
-        value: new Buffer([0x04, 0x01, 0x27, 0xAD, 0x01, 0x00, 0x00 ]) // maybe 12 0xC unsigned 8 bit
-      })
-    ]
-  });
+        uuid: 'D004',
+        properties: ['read', 'write', 'notify'],
+        descriptors: [
+            new Descriptor({
+                uuid: 'D014',
+                value: 'set wifi'
+            }),
+            new Descriptor({
+                uuid: 'D024',
+                value: new Buffer([0x04, 0x01, 0x27, 0xAD, 0x01, 0x00, 0x00]) // maybe 12 0xC unsigned 8 bit
+            })
+        ]
+    });
     this._value = '';
     this._updateValueCallback = null;
 };
 
 util.inherits(DphotosWifiCharacteristic, Characteristic);
 
-DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback){
+DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
     // if(! dphotos.pair){
     //     // 如果没有在相册上按下确定，就不允许后续操作
     //     if (this._updateValueCallback) {
@@ -70,13 +70,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
             all_data = this._value;
             this._value = '';
             console.log(all_data);
-            try{
+            try {
                 data_json = aes.decryption(all_data, dphotos.key, dphotos.iv);
-            }catch(err){
+            } catch (err) {
                 if (this._updateValueCallback) {
-                    rt = {state: 'FAIL', msg: err.message, errorno: 'D00401'};
+                    rt = { state: 'FAIL', msg: err.message, errorno: 'D00401' };
                     rt_json = JSON.stringify(rt);
-                    this._updateValueCallback(new Buffer(rt_json,'utf8'));
+                    this._updateValueCallback(new Buffer(rt_json, 'utf8'));
                 }
                 callback(this.RESULT_UNLIKELY_ERROR);
             }
@@ -92,34 +92,76 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
                 "type": "request",
                 "system": "wifi",
                 "action": "setting",
-                "parameters":{
+                "parameters": {
                     "ssid": ssid,
                     "pass": password
                 },
                 "key": "openwrt148"
             }
-            var client  = mqtt.connect(options);
+            var client = mqtt.connect(options);
             if (this._updateValueCallback) {
-                var client  = mqtt.connect(options)
-                client.on('connect', function(){
+                var client = mqtt.connect(options)
+                client.on('connect', function () {
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
-                    sleep.sleep(30);
+                    // sleep.sleep(30);
+                    var sum_second = 30;
+                    var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
                     // 获得wifi的ip地址
-                   try{
-                    wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
-                    rt = {state: 'SUCESS', ip: wifi_ipv4};
-                    rt_json = JSON.stringify(rt);
-                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-                    // var rt_base64 = new Buffer(rt_json).toString('base64')
-                    this._updateValueCallback(new Buffer(secrect,'utf8'));
-                    }catch(e){
-                        rt = {state: 'SUCESS', msg:'wifi can not connect', errorno:'1002'};
+                    try {
+                        for (var i = sum_second; i >= 0; i--) {
+                            (function (i) {
+                                wpa_cli.status('wlan0', function (err, status) {
+                                    console.dir('count = ' + i);
+                                    if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                                        rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+                                        console.log(rt);
+                                        rt_json = JSON.stringify(rt);
+                                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                        this._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                    }
+                                    sleep.sleep(1);
+                                });
+                            })(i);
+                        }
+                        rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-		                console.log(secrect);
-                        this._updateValueCallback(new Buffer(secrect,'utf8'));
+                        this._updateValueCallback(new Buffer(secrect, 'utf8'));
+
+
+                        // for (var i = 0; i < sum_second; i++) {
+                        //     wpa_cli.status('wlan0', function (err, status) {
+                        //         console.dir(status);
+                        //         if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                        //             rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+                        //             rt_json = JSON.stringify(rt);
+                        //             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        //             this._updateValueCallback(new Buffer(secrect, 'utf8'));
+                        //         }
+                        //         if (count >= sum_second) {
+                        //             rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
+                        //             rt_json = JSON.stringify(rt);
+                        //             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        //             this._updateValueCallback(new Buffer(secrect, 'utf8'));
+                        //         }
+                        //         count++;
+                        //         sleep.sleep(1);
+                        //     }.bind(this));
+                        // }
+                        // wifi_ipv4 = os.networkInterfaces().wlan0[0].address;
+                        // rt = {state: 'SUCESS', ip: wifi_ipv4};
+                        // rt_json = JSON.stringify(rt);
+                        // secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        // // var rt_base64 = new Buffer(rt_json).toString('base64')
+                        // this._updateValueCallback(new Buffer(secrect,'utf8'));
+                    } catch (e) {
+                        rt = { state: 'SUCESS', msg: 'wifi can not connect', errorno: '1002' };
+                        rt_json = JSON.stringify(rt);
+                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        console.log(secrect);
+                        this._updateValueCallback(new Buffer(secrect, 'utf8'));
                     }
                     client.end()
                 }.bind(this));
@@ -128,13 +170,13 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function(data, offset, with
         if (!withoutResponse) {
             callback(this.RESULT_SUCCESS);
         }
-    }else{
+    } else {
         callback(this.RESULT_UNLIKELY_ERROR);
     }
 };
 
 // 订阅
-DphotosWifiCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+DphotosWifiCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
     console.log('DphotosWifiCharacteristic - onSubscribe');
     this._updateValueCallback = updateValueCallback;
     // socket.on('node-sub', function (data) {//等待界面的确认

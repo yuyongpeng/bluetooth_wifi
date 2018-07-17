@@ -34,17 +34,16 @@
     "co": "^4.6.0",
     "express": "^4.16.3",
     "forever": "^0.15.3",
+    "mqtt": "2.18.1",
     "node-rsa": "^0.4.2",
     "request": "^2.86.0",
     "request-promise": "^4.2.2",
     "sleep": "^5.1.1",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
+    "wireless-tools": "^0.19.0",
     "wirelesser": "~2.0.5",
-    "wpa_supplicant": "^1.0.2",
-    "mqtt": "2.18.1",
-    "sleep": "^5.1.1",
-    "wireless-tools": "^0.19.0"
+    "wpa_supplicant": "^1.0.2"
   },
   "optionalDependencies": {
     "bluetooth-hci-socket": "^0.5.1",
