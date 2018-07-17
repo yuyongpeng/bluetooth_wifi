@@ -136,9 +136,9 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                         self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                         over = true;
-                                        i = sum_second;
-                                        resolve();
-                                        return;
+                                        // i = sum_second;
+                                        // resolve();
+                                        // return;
                                     }
                                     if (status.wpa_state == 'COMPLETED' && status.ip == undefined) {
                                         console.dir('aaaa');
