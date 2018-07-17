@@ -43,7 +43,8 @@
     "wirelesser": "~2.0.5",
     "wpa_supplicant": "^1.0.2",
     "mqtt": "2.18.1",
-    "sleep": "^5.1.1"
+    "sleep": "^5.1.1",
+    "wireless-tools": "^0.19.0"
   },
   "optionalDependencies": {
     "bluetooth-hci-socket": "^0.5.1",

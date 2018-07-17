@@ -8,6 +8,7 @@ var aes = require('./utils');
 var dphotos = require('./dphotos');
 var http = require('http');
 var socket = require('socket.io-client')('http://localhost:8081');
+var wpa_cli = require('wireless-tools/wpa_cli');
 var mqtt = require('mqtt')
 var options = {
   port: 1883,

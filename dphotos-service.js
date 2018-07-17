@@ -7,6 +7,7 @@ var BlenoPrimaryService = bleno.PrimaryService;
 var DphotoPubkeyCharacteristic = require('./dphotos-pubkey-characteristic');
 var DphotoPairCharacteristic = require('./dphotos-pair-characteristic');
 var DphotoWifiCharacteristic = require('./dphotos-wifi-characteristic');
+var DphotoWifiCharacteristici_getip = require('./dphotos-wifi-characteristic-getip');
 var DphotosConnectCharacteristic = require('./dphotos-connect-characteristic');
 
 function DphotosService() {
@@ -16,7 +17,8 @@ function DphotosService() {
           // new DphotosConnectCharacteristic(),
           new DphotoPubkeyCharacteristic(),
           new DphotoPairCharacteristic(),
-          new DphotoWifiCharacteristic()
+          new DphotoWifiCharacteristic(),
+          new DphotoWifiCharacteristici_getip()
       ]
   });
 }
