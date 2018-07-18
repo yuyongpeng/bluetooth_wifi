@@ -19,11 +19,11 @@ function Dphotos() {
 util.inherits(Dphotos, events.EventEmitter);
 
 // 设置 公钥和私钥
-Dphotos.prototype.setprikey = function(key) {
+Dphotos.setprikey = function(key) {
     this.prikey = key;
     console.log('set pri key = ' + this.prikey);
 };
-Dphotos.prototype.setpubkey = function(key) {
+Dphotos.setpubkey = function(key) {
     this.pubkey = key;
     console.log('set pub key = ' + this.pubkey);
 };
@@ -33,7 +33,7 @@ Dphotos.prototype.setpubkey = function(key) {
  * @param {*} key 
  * @param {*} iv 
  */
-Dphotos.prototype.setKeyIv = function(){
+Dphotos.setKeyIv = function(){
     var key = aesutil.key;
     var iv = aesutil.iv;
     var obj = {"key":key, "iv":iv}; 
@@ -43,16 +43,16 @@ Dphotos.prototype.setKeyIv = function(){
 }
 
 // 获得 公钥和私钥
-Dphotos.prototype.getprikey = function(key) {
+Dphotos.getprikey = function(key) {
     return this.prikey;
 };
-Dphotos.prototype.getpubkey = function(key) {
+Dphotos.getpubkey = function(key) {
     return this.pubkey;
 };
 /**
  * 获得当前的key和id
  */
-Dphotos.prototype.getKeyIv = function(){
+Dphotos.getKeyIv = function(){
    var content = fs.readFileSync(config.root + '/' + config.cache_file);
    return JSON.parse(content);
 }
