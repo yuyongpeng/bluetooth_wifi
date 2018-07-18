@@ -105,9 +105,12 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                 var client = mqtt.connect(options)
                 client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
-                    client.publish('msg', JSON.stringify(wifi_set))
-                    client.end()
-                    // sleep.sleep(20);
+                    await new Promise(function(resolve, reject){
+                        client.publish('msg', JSON.stringify(wifi_set));
+                        client.end();
+                        resove();
+                    });
+                    sleep.sleep(10);
                     for(var k=0; k<20; k++){
                         setTimeout(function(){
                             console.log('kkkkk');
