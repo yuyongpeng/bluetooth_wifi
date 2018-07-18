@@ -107,7 +107,10 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                     // client.subscribe('msg') //订阅msg的数据
                     client.publish('msg', JSON.stringify(wifi_set))
                     client.end()
-                    sleep.sleep(20);
+                    // sleep.sleep(20);
+                    for(var k=0; k<20; k++){
+                        setTimeout("ssss",1000);
+                    }
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
