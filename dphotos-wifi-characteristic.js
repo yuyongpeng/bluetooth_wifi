@@ -111,11 +111,6 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         resolve();
                     });
                     sleep.sleep(10);
-                    // for(var k=0; k<20; k++){
-                    //     setTimeout(function(){
-                    //         console.log('kkkkk');
-                    //     },1000);
-                    // }
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
@@ -148,6 +143,8 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     rt_json = JSON.stringify(rt);
                                     console.log(rt_json);
                                     secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                    execSync('dhclient -r wlan0');
+                                    execSync('dhclient wlan0');
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     over = true;
                                     resolve();
