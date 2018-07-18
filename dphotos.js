@@ -37,6 +37,7 @@ Dphotos.prototype.setKeyIv = function(){
     var key = aesutil.key;
     var iv = aesutil.iv;
     var obj = {"key":key, "iv":iv}; 
+    console.log(obj);
     fs.writeFileSync(config.root + '/' + config.cache_file, JSON.stringify(obj));
     return {"key":key, "iv":iv};
 }
@@ -56,4 +57,4 @@ Dphotos.prototype.getKeyIv = function(){
    return JSON.parse(content);
 }
 
-module.exports.Dphotos = Dphotos;
+module.exports = Dphotos;
