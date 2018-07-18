@@ -3,19 +3,20 @@
  */
 var crypto = require('crypto');
 var aesutil = module.exports = {};
+var fs = require('fs');
+var config = require('./config');
 
-
-function randomWord(randomFlag, min, max){
+function randomWord(randomFlag, min, max) {
     var str = "",
         range = min,
         arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
     // 随机产生
-    if(randomFlag){
-        range = Math.round(Math.random() * (max-min)) + min;
+    if (randomFlag) {
+        range = Math.round(Math.random() * (max - min)) + min;
     }
-    for(var i=0; i<range; i++){
-        pos = Math.round(Math.random() * (arr.length-1));
+    for (var i = 0; i < range; i++) {
+        pos = Math.round(Math.random() * (arr.length - 1));
         str += arr[pos];
     }
     return str;
@@ -78,4 +79,36 @@ aesutil.decryption = function (data, key, iv) {
     cipherChunks.push(decipher.update(data, cipherEncoding, clearEncoding));
     cipherChunks.push(decipher.final(clearEncoding));
     return cipherChunks.join('');
+}
+
+/**
+ * 获得设备的id
+ */
+aesutil.getDeviceId = function () {
+    // TODO: 生产环境是从接口读取到当前的deviceid
+    var deviceId = fs.readFileSync(config.root + '/' + config.cache_file);
+    return deviceId.trim();
+}
+
+/**
+ * 获得随机串
+ * @param {int} len 
+ */
+aesutils.getRandom = function (len, type) {
+    len = len || 16;
+    type = type || 0;
+    var $chars = '';
+    if(type == 0){
+        $chars = 'abcdefhijklmnopqrstuvwxyz0123456789'; 
+    }else if(type == 1){
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz'; 
+    }else{
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz0123456789'; 
+    }
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
 }

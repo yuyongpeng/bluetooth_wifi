@@ -23,7 +23,8 @@ util.inherits(DphotosPubkeyCharacteristic, Characteristic);
 
 DphotosPubkeyCharacteristic.prototype.onReadRequest = function(offset, callback) {
     console.log(dphotos.key)
-    var rt = {state: 'SUCESS', key: dphotos.key, iv: dphotos.iv};
+    var {key, iv} = dphotos.getKeyIv();
+    var rt = {state: 'SUCESS', key: key, iv: iv};
     rt_json = JSON.stringify(rt);
     var rt_base64 = new Buffer(rt_json).toString('base64');
     callback(this.RESULT_SUCCESS, new Buffer(rt_base64,'utf8'));

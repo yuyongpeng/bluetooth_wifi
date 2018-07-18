@@ -3,6 +3,7 @@ var NodeRSA = require('node-rsa');
 var dphotos = require('./dphotos');
 var aes = require('./utils');
 var DphotosService = require('./dphotos-service');
+var config = require('./config');
 
 var primaryService = new DphotosService();
 
@@ -10,7 +11,7 @@ bleno.on('stateChange', function(state) {
     console.log('on -> stateChange: ' + state);
     if (state === 'poweredOn') {
         // 开启广播
-        bleno.startAdvertising('dPHOTOS-tfb-1234', [primaryService.uuid]);
+        bleno.startAdvertising(config.wifi_name, [primaryService.uuid]);
     } else {
         bleno.stopAdvertising();
     }

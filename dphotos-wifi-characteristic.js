@@ -45,18 +45,6 @@ util.inherits(DphotosWifiCharacteristic, Characteristic);
 
 DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
     var self = this;
-    // if(! dphotos.pair){
-    //     // 如果没有在相册上按下确定，就不允许后续操作
-    //     if (this._updateValueCallback) {
-    //         console.log('DphotosWifiCharacteristic - pair=false');
-    //         rt = {state: 'FAIL'};
-    //         rt_json = JSON.stringify(rt);
-    //         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-    //         var rt_base64 = new Buffer(rt_json).toString('base64')
-    //         this._updateValueCallback(new Buffer(secrect,'utf8'));
-    //     }
-    //     callback(this.RESULT_UNLIKELY_ERROR);
-    // }
     if (offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
@@ -64,15 +52,15 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
         data_str = data.toString('utf8');
         var tp = data_str.substr(0, 1);
         var ds = data_str.substr(1);
-        // console.log(tp);
-        // console.log(ds);
         this._value += ds;
         if (tp == '1') {
+            // 设置 key 和 iv
+            var { key, iv } = dphotos.getKeyIv();
             all_data = this._value;
             this._value = '';
             console.log(all_data);
             try {
-                data_json = aes.decryption(all_data, dphotos.key, dphotos.iv);
+                data_json = aes.decryption(all_data, key, iv);
             } catch (err) {
                 if (this._updateValueCallback) {
                     rt = { state: 'FAIL', msg: err.message, errorno: 'D00401' };
@@ -105,7 +93,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                 var client = mqtt.connect(options)
                 client.on('connect', async () => {
                     // client.subscribe('msg') //订阅msg的数据
-                    await new Promise(function(resolve, reject){
+                    await new Promise(function (resolve, reject) {
                         client.publish('msg', JSON.stringify(wifi_set));
                         client.end();
                         resolve();
@@ -124,25 +112,24 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     console.dir('1111');
                                     rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                                     rt_json = JSON.stringify(rt);
-                                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                    secrect = aes.encryption(rt_json, key, iv);
                                     console.log(rt_json);
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     over = true;
-                                }else if (status.wpa_state == 'INTERFACE_DISABLED') {
+                                } else if (status.wpa_state == 'INTERFACE_DISABLED') {
                                     console.dir('2222');
                                     rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                                     rt_json = JSON.stringify(rt);
-                                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                    secrect = aes.encryption(rt_json, key, iv);
                                     console.log(rt_json);
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     over = true;
-
-                                }else if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                                } else if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
                                     console.dir('222');
                                     rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
                                     rt_json = JSON.stringify(rt);
                                     console.log(rt_json);
-                                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                    secrect = aes.encryption(rt_json, key, iv);
                                     execSync('dhclient -r wlan0');
                                     execSync('dhclient wlan0');
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
@@ -156,7 +143,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         if (over == false) {
                             rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
                             rt_json = JSON.stringify(rt);
-                            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                            secrect = aes.encryption(rt_json, key, iv);
                             this._updateValueCallback(new Buffer(secrect, 'utf8'));
                             console.log('444');
                         }
@@ -165,7 +152,7 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         console.log(e);
                         rt = { state: 'FAIL', msg: 'wifi can not connect', errorno: '1002' };
                         rt_json = JSON.stringify(rt);
-                        secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                        secrect = aes.encryption(rt_json, key, iv);
                         console.log(secrect);
                         this._updateValueCallback(new Buffer(secrect, 'utf8'));
                     }

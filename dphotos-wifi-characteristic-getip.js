@@ -37,20 +37,46 @@ var DphotosWifiCharacteristicGetip = function () {
 util.inherits(DphotosWifiCharacteristicGetip, Characteristic);
 
 DphotosWifiCharacteristicGetip.prototype.onReadRequest = function (offset, callback) {
+    // wpa_cli.status('wlan0', function (err, status) {
+    //     console.dir(status);
+    //     if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+    //         rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
+    //         rt_json = JSON.stringify(rt);
+    //         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+    //         // this._updateValueCallback(new Buffer(secrect,'utf8'));
+    //         callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
+    //     } else {
+    //         rt = { state: 'FAIL', msg: 'can not get ip address', errorno: '1003' };
+    //         rt_json = JSON.stringify(rt);
+    //         secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+    //         // this._updateValueCallback(new Buffer(secrect,'utf8'));
+    //         callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
+    //     }
+    // }.bind(this));
+
     wpa_cli.status('wlan0', function (err, status) {
         console.dir(status);
-        if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+        if (status == undefined) {
+            console.dir('1111');
+            rt = { state: 'FAIL', msg: 'Please reconnect wifi', errorno: '1006' };
+            rt_json = JSON.stringify(rt);
+            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+            console.log(rt_json);
+            self._updateValueCallback(new Buffer(secrect, 'utf8'));
+        } else if (status.wpa_state == 'INTERFACE_DISABLED') {
+            console.dir('2222');
+            rt = { state: 'FAIL', msg: 'Please reconnect wifi', errorno: '1006' };
+            rt_json = JSON.stringify(rt);
+            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+            console.log(rt_json);
+            self._updateValueCallback(new Buffer(secrect, 'utf8'));
+        } else if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+            console.dir('3333');
             rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
             rt_json = JSON.stringify(rt);
+            console.log(rt_json);
             secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-            // this._updateValueCallback(new Buffer(secrect,'utf8'));
-            callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
-        } else {
-            rt = { state: 'FAIL', msg: 'can not get ip address', errorno: '1003' };
-            rt_json = JSON.stringify(rt);
-            secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
-            // this._updateValueCallback(new Buffer(secrect,'utf8'));
-            callback(this.RESULT_SUCCESS, new Buffer(secrect, 'utf8'));
+            self._updateValueCallback(new Buffer(secrect, 'utf8'));
         }
     }.bind(this));
 };

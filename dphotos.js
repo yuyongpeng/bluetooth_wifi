@@ -3,6 +3,9 @@
  */
 var util = require('util');
 var events = require('events');
+var aesutil = require('./utils');
+var fs = require('fs');
+var config = require('./config');
 
 function Dphotos() {
     events.EventEmitter.call(this);
@@ -25,6 +28,19 @@ Dphotos.prototype.setpubkey = function(key) {
     console.log('set pub key = ' + this.pubkey);
 };
 
+/**
+ * 设置key和iv并返回新生成的key和iv
+ * @param {*} key 
+ * @param {*} iv 
+ */
+Dphotos.prototype.setKeyIv = function(){
+    var key = aesutil.key;
+    var iv = aesutil.iv;
+    var obj = {"key":key, "iv":iv}; 
+    fs.writeFileSync(config.root + '/' + config.cache_file, JSON.stringify(obj));
+    return {"key":key, "iv":iv};
+}
+
 // 获得 公钥和私钥
 Dphotos.prototype.getprikey = function(key) {
     return this.prikey;
@@ -32,5 +48,12 @@ Dphotos.prototype.getprikey = function(key) {
 Dphotos.prototype.getpubkey = function(key) {
     return this.pubkey;
 };
+/**
+ * 获得当前的key和id
+ */
+Dphotos.prototype.getKeyIv = function(){
+   var content = fs.readFileSync(config.root + '/' + config.cache_file);
+   return JSON.parse(content);
+}
 
 module.exports.Dphotos = Dphotos;
