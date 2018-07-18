@@ -37,9 +37,9 @@ Dphotos.setKeyIv = function(){
     // var key = aesutil.key();
     // var iv = aesutil.iv();
     var key = aesutil.getRandom(32, 1);
-    var key = aesutil.getRandom(16, 0);
+    var iv = aesutil.getRandom(16, 0);
     var obj = {key:key, iv:iv}; 
-    console.log(obj);
+    // console.log(obj);
     fs.writeFileSync(config.root + '/' + config.cache_file, JSON.stringify(obj));
     return {"key":key, "iv":iv};
 }

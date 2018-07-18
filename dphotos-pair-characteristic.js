@@ -39,6 +39,7 @@ DphotosPairCharacteristic.prototype.onWriteRequest = function (data, offset, wit
             // 设置 key 和 iv
             console.log(dphotos);
             var { key, iv } = dphotos.setKeyIv();
+            console.log(key + iv);
             // {"username":"yuyongpeng", "mobile":"12345"}
             // eyJ1c2VybmFtZSI6Inl1eW9uZ3BlbmciLCAibW9iaWxlIjoiMTIzNDUifQ==
             // 0eyJ1c2VybmFtZSI6Inl01eW9uZ3BlbmciLCAibW09iaWxlIjoiMTIzNDUif1Q==
