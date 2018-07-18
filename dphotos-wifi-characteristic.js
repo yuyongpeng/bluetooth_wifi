@@ -108,14 +108,14 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                     await new Promise(function(resolve, reject){
                         client.publish('msg', JSON.stringify(wifi_set));
                         client.end();
-                        resove();
+                        resolve();
                     });
                     sleep.sleep(10);
-                    for(var k=0; k<20; k++){
-                        setTimeout(function(){
-                            console.log('kkkkk');
-                        },1000);
-                    }
+                    // for(var k=0; k<20; k++){
+                    //     setTimeout(function(){
+                    //         console.log('kkkkk');
+                    //     },1000);
+                    // }
                     var sum_second = 30;
                     var count = 0;
                     console.log('DphotosWifiCharacteristic - onWriteRequest: notifying');
