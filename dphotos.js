@@ -36,7 +36,7 @@ Dphotos.setpubkey = function(key) {
 Dphotos.setKeyIv = function(){
     var key = aesutil.key;
     var iv = aesutil.iv;
-    var obj = {"key":key, "iv":iv}; 
+    var obj = {key:key, iv:iv}; 
     console.log(obj);
     fs.writeFileSync(config.root + '/' + config.cache_file, JSON.stringify(obj));
     return {"key":key, "iv":iv};
