@@ -115,7 +115,6 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                         await new Promise(function (resolve, reject) {
                             wpa_cli.status('wlan0', function (err, status) {
                                 // if (err) return reject(err);
-                                console.dir('count = ' + i);
                                 console.dir(status);
                                 if (status == undefined) {
                                     console.dir('1111');
@@ -125,8 +124,16 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     console.log(rt_json);
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     over = true;
-                                }
-                                if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
+                                }else if (status.wpa_state == 'INTERFACE_DISABLED') {
+                                    console.dir('2222');
+                                    rt = { state: 'FAIL', msg: 'can not connect wifi', errorno: '1002' };
+                                    rt_json = JSON.stringify(rt);
+                                    secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
+                                    console.log(rt_json);
+                                    self._updateValueCallback(new Buffer(secrect, 'utf8'));
+                                    over = true;
+
+                                }else if (status.wpa_state == 'COMPLETED' && status.ip != undefined) {
                                     console.dir('222');
                                     rt = { state: 'SUCESS', ip: status.ip, deviceid: '51c3c8a0-7f440-11e8-b8a8-79d477b2ab68' };
                                     rt_json = JSON.stringify(rt);
@@ -134,15 +141,14 @@ DphotosWifiCharacteristic.prototype.onWriteRequest = function (data, offset, wit
                                     secrect = aes.encryption(rt_json, dphotos.key, dphotos.iv);
                                     self._updateValueCallback(new Buffer(secrect, 'utf8'));
                                     over = true;
-                                    // i = sum_second;
-                                    // resolve();
+                                    resolve();
                                     // return;
                                 }
                                 // if (status.wpa_state == 'COMPLETED' && status.ip == undefined) {
                                 //     console.dir('aaaa');
                                 //     execSync('dhclient wlan0');
                                 // }
-                                setTimeout(resolve, 1000);
+                                // setTimeout(resolve, 1000);
                             });
                         });
 
