@@ -94,7 +94,7 @@ aesutil.getDeviceId = function () {
  * 获得随机串
  * @param {int} len 
  */
-aesutils.getRandom = function (len, type) {
+aesutil.getRandom = function (len, type) {
     len = len || 16;
     type = type || 0;
     var $chars = '';
